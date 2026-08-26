@@ -51,7 +51,7 @@
     background: var(--bg-color);
   }
 
-  /* 헤더 영역 및 우측 상단 설치 버튼 */
+  /* 헤더 영역 및 우측 상단 설치 버튼, 왼쪽 상단 새로고침 버튼 */
   .header {
     background-color: var(--card-bg);
     padding: 15px 15px;
@@ -69,6 +69,22 @@
     object-fit: contain;
   }
   
+  /* 맨 왼쪽 상단 조그마한 옅은 회색 '일정 새로고침' 버튼 */
+  .refresh-btn {
+    position: absolute;
+    left: 15px;
+    background-color: transparent;
+    color: #cbd5e0;
+    border: none;
+    padding: 4px 0;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .refresh-btn:active {
+    color: #718096;
+  }
+
   .install-btn {
     position: absolute;
     right: 15px;
@@ -82,7 +98,7 @@
     cursor: pointer;
   }
 
-  /* 월별 필터 영역: 아래 달력과 양쪽 마진(15px)을 맞추고 버튼들이 균등하게 꽉 차도록 설정 */
+  /* 월별 필터 영역 */
   .month-filters {
     display: flex;
     gap: 4px;
@@ -93,7 +109,7 @@
   }
   
   .filter-btn {
-    flex: 1; /* 화면 너비에 맞춰 버튼들이 균등하게 늘어나도록 설정 */
+    flex: 1; 
     padding: 8px 2px;
     border: 1px solid var(--border-color);
     background-color: #ffffff;
@@ -301,12 +317,14 @@
   .modal-content {
     background: #ffffff;
     width: 100%;
-    max-width: 400px;
+    max-width: 480px;
     border-radius: 16px;
     padding: 25px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     animation: slideUp 0.3s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   @keyframes slideUp {
@@ -323,15 +341,16 @@
     font-size: 1.5rem;
     cursor: pointer;
     color: #a0aec0;
+    z-index: 10;
   }
   
   .modal-title {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     line-height: 1.4;
-    padding-right: 20px;
+    padding-right: 25px;
     word-break: keep-all;
   }
   .modal-title.chairman {
@@ -339,21 +358,45 @@
   }
 
   .modal-detail-row {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
   .modal-label {
     font-weight: 700;
     color: var(--text-muted);
-    width: 90px;
+    width: 80px;
     flex-shrink: 0;
   }
   .modal-value {
     color: var(--text-dark);
     flex-grow: 1;
     word-break: keep-all;
+  }
+
+  .modal-img-container {
+    margin-top: 15px;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+  }
+  .modal-img-container img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    object-fit: contain;
+    transition: transform 0.2s;
+  }
+  .modal-img-container img:hover {
+    transform: scale(1.02);
+  }
+  .img-hint {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
   }
 
   .loading-msg {
@@ -375,13 +418,14 @@
 
 <div class="app-container">
   <div class="header">
+    <!-- 맨 왼쪽 상단 조그마한 옅은 회색 '일정 새로고침' 버튼 추가 -->
+    <button class="refresh-btn" onclick="manualRefresh()">일정 새로고침</button>
     <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
     <button id="installBtn" class="install-btn" style="display: none;">앱으로 설치</button>
   </div>
 
-  <!-- 상단 월별 필터 버튼 영역 (2026년 버튼 포함 총 13개의 버튼이 양쪽 달력 크기에 맞춰 배치됨) -->
   <div class="month-filters" id="filterContainer">
-    <button class="filter-btn active" data-month="all">2026년</button>
+    <button class="filter-btn active" data-month="all">26년</button>
   </div>
 
   <div class="calendar-wrapper" id="calendarWrapper">
@@ -427,6 +471,7 @@
       <span class="modal-label">비고</span>
       <span class="modal-value" id="modalNote"></span>
     </div>
+    <div id="modalImgWrapper"></div>
   </div>
 </div>
 
@@ -524,15 +569,23 @@
         attendees: r[3] ? r[3].trim() : "ㅡ",
         content: r[4] ? r[4].trim() : "ㅡ",
         host: r[5] ? r[5].trim() : "ㅡ",
-        note: r[6] ? r[6].trim() : "ㅡ"
+        note: r[6] ? r[6].trim() : "ㅡ",
+        image: r[7] ? r[7].trim() : "" 
       });
     }
     return dataArr;
   }
 
+  // 수동 새로고침 버튼 클릭 시 실행되는 함수
+  async function manualRefresh() {
+    scheduleContainer.innerHTML = `<div class="loading-msg">최신 일정을 새로고침 중입니다...⏳</div>`;
+    await loadData();
+  }
+
   async function loadData() {
     try {
-      const response = await fetch(GOOGLE_SHEET_CSV_URL);
+      // 캐시 방지를 위해 고유 타임스탬프 파라미터 추가
+      const response = await fetch(GOOGLE_SHEET_CSV_URL + "&t=" + new Date().getTime());
       const csvText = await response.text();
       scheduleData = parseCSV(csvText);
       updateView();
@@ -686,6 +739,18 @@
     document.getElementById('modalHost').innerText = event.host;
     document.getElementById('modalNote').innerText = event.note;
 
+    const imgWrapper = document.getElementById('modalImgWrapper');
+    if (event.image && event.image.startsWith('http')) {
+      imgWrapper.innerHTML = `
+        <div class="modal-img-container">
+          <img src="${event.image}" alt="관련 사진" onclick="window.open('${event.image}', '_blank')" title="클릭하면 원본 크기로 커집니다">
+          <div class="img-hint">🔍 이미지를 누르면 크게 볼 수 있습니다</div>
+        </div>
+      `;
+    } else {
+      imgWrapper.innerHTML = '';
+    }
+
     document.getElementById('eventModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
@@ -727,7 +792,6 @@
     });
   });
 
-  // --- 홈화면 설치 버튼 로직 ---
   let deferredPrompt;
   const installBtn = document.getElementById('installBtn');
 
@@ -758,7 +822,6 @@
     });
   }
 
-  // --- 달력 스와이프 기능 ---
   const calendarWrapper = document.getElementById('calendarWrapper');
   let startX = 0;
   let endX = 0;
