@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>한국디벨로퍼협회(KODA) 일정 안내</title>
 
-<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 (아이콘은 심볼로 유지) -->
+<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="KODA 일정">
@@ -82,30 +82,29 @@
     cursor: pointer;
   }
 
+  /* 월별 필터 영역: 아래 달력과 양쪽 마진(15px)을 맞추고 버튼들이 균등하게 꽉 차도록 설정 */
   .month-filters {
     display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    padding: 15px;
-    background: var(--card-bg);
-    white-space: nowrap;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    gap: 4px;
+    padding: 0 15px;
+    margin-top: 15px;
+    background: transparent;
+    overflow-x: visible;
   }
-  .month-filters::-webkit-scrollbar {
-    display: none;
-  }
+  
   .filter-btn {
-    padding: 8px 16px;
+    flex: 1; /* 화면 너비에 맞춰 버튼들이 균등하게 늘어나도록 설정 */
+    padding: 8px 2px;
     border: 1px solid var(--border-color);
-    background-color: var(--bg-color);
-    border-radius: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-muted);
     transition: all 0.2s;
-    flex-shrink: 0;
+    text-align: center;
+    white-space: nowrap;
   }
   .filter-btn.active {
     background-color: var(--text-dark);
@@ -380,6 +379,7 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱으로 설치</button>
   </div>
 
+  <!-- 상단 월별 필터 버튼 영역 (2026년 버튼 포함 총 13개의 버튼이 양쪽 달력 크기에 맞춰 배치됨) -->
   <div class="month-filters" id="filterContainer">
     <button class="filter-btn active" data-month="all">2026년</button>
   </div>
@@ -434,7 +434,7 @@
   const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEbM8YAc7jQes9oX6_-aVsVib2H40avHQkL6TkRRI2cYmw7nYG29F_1lGGz-2gL0nve4Q91MBM02Q-/pub?output=csv";
   
   let scheduleData = [];
-  let currentSelectedMonth = 'all'; // 현재 선택된 월 상태 관리 ('all' 또는 숫자 1~12)
+  let currentSelectedMonth = 'all'; 
 
   const filterContainer = document.getElementById('filterContainer');
   for(let i = 1; i <= 12; i++) {
@@ -542,7 +542,6 @@
     }
   }
 
-  // 화면 전체(달력 + 목록)를 현재 상태에 맞춰 갱신하는 통합 함수
   function updateView() {
     renderCalendar();
     renderSchedules(currentSelectedMonth);
@@ -612,20 +611,17 @@
     }
   }
 
-  // 달력 월 변경 (버튼 또는 스와이프 시 아래 목록도 해당 월로 자동 연동)
   window.changeMonth = function(offset) {
     calMonth += offset;
     if(calMonth > 12) { calMonth = 1; calYear++; }
     else if(calMonth < 1) { calMonth = 12; calYear--; }
 
-    // 월을 넘기면 상단 필터 상태도 해당 월로 동기화
     currentSelectedMonth = calMonth;
     syncFilterButtonsUI();
 
     updateView();
   };
 
-  // 상단 월 버튼 UI 활성화 상태 동기화 함수
   function syncFilterButtonsUI() {
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(b => {
@@ -711,7 +707,6 @@
     }
   };
 
-  // 상단 월별 필터 버튼 클릭 이벤트 (클릭 시 달력과 목록이 모두 해당 월로 연동)
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -763,7 +758,7 @@
     });
   }
 
-  // --- 달력 스와이프 기능 (스와이프 시 목록도 함께 연동됨) ---
+  // --- 달력 스와이프 기능 ---
   const calendarWrapper = document.getElementById('calendarWrapper');
   let startX = 0;
   let endX = 0;
