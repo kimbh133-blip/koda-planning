@@ -142,12 +142,45 @@
     border-color: var(--text-dark);
   }
 
-  /* 달력 영역 (좌우 여백과 내부 간격을 좁혀서 깨짐 방지) */
+  /* 조건별 토글 버튼 영역 (월별 버튼과 달력 사이) */
+  .category-filter-container {
+    display: flex;
+    gap: 6px;
+    padding: 0 10px;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .cat-filter-btn {
+    flex: 1;
+    padding: 6px 4px;
+    border: 1px solid var(--border-color);
+    background-color: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .cat-filter-btn.active-chairman {
+    background-color: #0052cc;
+    color: #ffffff;
+    border-color: #0052cc;
+  }
+  .cat-filter-btn.active-edu {
+    background-color: #319795;
+    color: #ffffff;
+    border-color: #319795;
+  }
+
+  /* 달력 영역 */
   .calendar-wrapper {
     background: var(--card-bg);
     margin: 10px;
     border-radius: 12px;
-    padding: 8px;
+    padding: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     overflow: hidden; 
   }
@@ -155,10 +188,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 700;
     font-size: 1rem;
-    padding: 0 4px;
   }
   .cal-nav-btn {
     background: none;
@@ -166,7 +198,7 @@
     font-size: 1.1rem;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 5px 8px;
   }
   
   .cal-grid {
@@ -174,7 +206,6 @@
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
     text-align: center;
-    width: 100%;
     animation: fadeIn 0.3s ease-out;
   }
   @keyframes fadeIn {
@@ -185,17 +216,17 @@
   .cal-day-name {
     font-size: 0.65rem;
     color: var(--text-muted);
-    padding-bottom: 2px;
+    padding-bottom: 3px;
     font-weight: 600;
   }
   .cal-cell {
-    min-height: 44px;
+    min-height: 48px;
     border-radius: 4px;
     background: #fdfdfd;
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    padding: 1px;
+    padding: 2px;
     text-align: left;
     position: relative;
     overflow: hidden;
@@ -211,7 +242,7 @@
     font-size: 0.65rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 1px;
+    margin-bottom: 2px;
     padding-left: 1px;
     display: flex;
     align-items: center;
@@ -232,10 +263,10 @@
   }
   
   .cal-event-chip {
-    font-size: 0.52rem;
-    padding: 1px 2px;
-    border-radius: 2px;
-    margin-bottom: 1px;
+    font-size: 0.55rem;
+    padding: 2px 2px;
+    border-radius: 3px;
+    margin-bottom: 2px;
     color: #000000; 
     white-space: nowrap;
     overflow: hidden;
@@ -278,14 +309,6 @@
   .quick-btn:hover {
     background-color: #f7fafc;
     border-color: #cbd5e0;
-  }
-  .quick-btn.empty-slot {
-    color: #cbd5e0;
-    border-style: dashed;
-    cursor: default;
-  }
-  .quick-btn.empty-slot:hover {
-    background-color: #ffffff;
   }
 
   /* 일정 리스트 영역 */
@@ -460,8 +483,15 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
+  <!-- 상단 월별 필터 버튼 영역 -->
   <div class="month-filters" id="filterContainer">
     <button class="filter-btn active" data-month="all">26년</button>
+  </div>
+
+  <!-- 조건별 보기 토글 버튼 영역 (월별 버튼과 달력 사이) -->
+  <div class="category-filter-container">
+    <button class="cat-filter-btn" id="filterChairman" onclick="toggleCategory('chairman')">회장님 참석일정만 보기</button>
+    <button class="cat-filter-btn" id="filterEdu" onclick="toggleCategory('edu')">교육·ARP일정만 보기</button>
   </div>
 
   <div class="calendar-wrapper" id="calendarWrapper">
@@ -474,10 +504,11 @@
     </div>
   </div>
 
+  <!-- 1행 4열 바로가기 버튼 영역 -->
   <div class="quick-menu-container">
+    <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
     <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
-    <div class="quick-btn empty-slot">준비중</div>
-    <div class="quick-btn empty-slot">준비중</div>
+    <div class="quick-btn" style="color: #cbd5e0; border-style: dashed; cursor: default;">준비중</div>
     <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
   </div>
 
@@ -522,6 +553,7 @@
   
   let scheduleData = [];
   let currentSelectedMonth = 'all'; 
+  let activeCategory = null; // null, 'chairman', 'edu'
 
   const filterContainer = document.getElementById('filterContainer');
   for(let i = 1; i <= 12; i++) {
@@ -617,6 +649,56 @@
     return dataArr;
   }
 
+  // 조건별 필터 토글 함수
+  window.toggleCategory = function(category) {
+    if (activeCategory === category) {
+      activeCategory = null; // 이미 선택되어 있으면 해제
+    } else {
+      activeCategory = category;
+    }
+    updateCategoryButtonsUI();
+    updateView();
+  };
+
+  function updateCategoryButtonsUI() {
+    const btnChairman = document.getElementById('filterChairman');
+    const btnEdu = document.getElementById('filterEdu');
+    
+    btnChairman.className = "cat-filter-btn";
+    btnEdu.className = "cat-filter-btn";
+
+    if (activeCategory === 'chairman') {
+      btnChairman.classList.add('active-chairman');
+    } else if (activeCategory === 'edu') {
+      btnEdu.classList.add('active-edu');
+    }
+  }
+
+  // 데이터 필터링 공통 로직
+  function getFilteredData() {
+    let data = scheduleData;
+
+    // 월별 필터 적용
+    if (currentSelectedMonth !== 'all') {
+      data = data.filter(event => event.month == currentSelectedMonth);
+    }
+
+    // 카테고리 필터 적용
+    if (activeCategory === 'chairman') {
+      data = data.filter(event => event.note.includes("회장님 참석"));
+    } else if (activeCategory === 'edu') {
+      data = data.filter(event => 
+        event.title.includes("ARP") || 
+        event.title.includes("ARPY") || 
+        event.title.includes("교육") || 
+        event.host.includes("교육") ||
+        event.note.includes("교육")
+      );
+    }
+
+    return data;
+  }
+
   async function manualRefresh() {
     scheduleContainer.innerHTML = `<div class="loading-msg">최신 일정을 새로고침 중입니다...⏳</div>`;
     await loadData();
@@ -636,7 +718,7 @@
 
   function updateView() {
     renderCalendar();
-    renderSchedules(currentSelectedMonth);
+    renderSchedules();
   }
 
   function renderCalendar() {
@@ -666,7 +748,9 @@
     }
 
     for(let d = 1; d <= lastDay; d++) {
-      const dayEvents = scheduleData.filter(e => e.month === calMonth && e.day === d);
+      // 달력에 들어갈 때는 월별 + 카테고리 조건이 반영된 데이터를 사용
+      const activeFiltered = getFilteredData();
+      const dayEvents = activeFiltered.filter(e => e.month === calMonth && e.day === d);
       
       let eventsHtml = '';
       dayEvents.forEach(e => {
@@ -725,12 +809,10 @@
     });
   }
 
-  function renderSchedules(filterMonth) {
+  function renderSchedules() {
     scheduleContainer.innerHTML = '';
     
-    const currentFilteredData = filterMonth === 'all' 
-      ? scheduleData 
-      : scheduleData.filter(event => event.month == filterMonth);
+    const currentFilteredData = getFilteredData();
 
     if (currentFilteredData.length === 0) {
       scheduleContainer.innerHTML = `<div class="no-data">등록된 일정이 없습니다.</div>`;
