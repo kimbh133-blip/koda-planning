@@ -2,7 +2,6 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<!-- 모바일 화면 자동 맞춤(뷰포트) 설정 강화 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>한국디벨로퍼협회(KODA) 일정 안내</title>
 
@@ -22,7 +21,6 @@
 </script>
 
 <style>
-  /* 모바일 화면 최적화 및 크기 자동 조절(반응형) 설정 */
   * {
     box-sizing: border-box;
   }
@@ -44,7 +42,7 @@
     margin: 0;
     padding: 0;
     color: var(--text-dark);
-    font-size: 14px;
+    font-size: 13px;
     -webkit-font-smoothing: antialiased;
     user-select: none; 
     -webkit-user-select: none;
@@ -54,7 +52,7 @@
 
   .app-container {
     width: 100%;
-    max-width: 600px; /* 태블릿이나 큰 화면에서도 너무 퍼지지 않게 제한 */
+    max-width: 600px;
     margin: 0 auto;
     background: var(--bg-color);
   }
@@ -62,7 +60,7 @@
   /* 헤더 영역 */
   .header {
     background-color: var(--card-bg);
-    padding: 12px 15px;
+    padding: 10px 12px;
     text-align: center;
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 2px 10px rgba(0,0,0,0.02);
@@ -73,20 +71,20 @@
     width: 100%;
   }
   .header img {
-    height: 28px; 
+    height: 26px; 
     width: auto;
-    max-width: 60%;
+    max-width: 55%;
     object-fit: contain;
   }
   
   .refresh-btn {
     position: absolute;
-    left: 12px;
+    left: 10px;
     background-color: transparent;
     color: #cbd5e0;
     border: none;
     padding: 4px 0;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 500;
     cursor: pointer;
   }
@@ -96,23 +94,23 @@
 
   .install-btn {
     position: absolute;
-    right: 12px;
+    right: 10px;
     background-color: transparent;
     color: #a0aec0;
     border: 1px solid #e2e8f0;
     padding: 3px 6px;
     border-radius: 6px;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
     cursor: pointer;
   }
 
-  /* 월별 필터 영역 (화면 작아도 자동 줄바꿈 방지 및 스크롤 지원) */
+  /* 월별 필터 영역 */
   .month-filters {
     display: flex;
     gap: 3px;
-    padding: 0 12px;
-    margin-top: 12px;
+    padding: 0 10px;
+    margin-top: 10px;
     background: transparent;
     width: 100%;
     overflow-x: auto;
@@ -125,13 +123,13 @@
   
   .filter-btn {
     flex: 1; 
-    min-width: 28px;
-    padding: 6px 0;
+    min-width: 26px;
+    padding: 5px 0;
     border: 1px solid var(--border-color);
     background-color: #ffffff;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-muted);
     transition: all 0.2s;
@@ -144,12 +142,12 @@
     border-color: var(--text-dark);
   }
 
-  /* 달력 영역 */
+  /* 달력 영역 (좌우 여백과 내부 간격을 좁혀서 깨짐 방지) */
   .calendar-wrapper {
     background: var(--card-bg);
-    margin: 12px;
+    margin: 10px;
     border-radius: 12px;
-    padding: 12px;
+    padding: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     overflow: hidden; 
   }
@@ -157,9 +155,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1rem;
+    padding: 0 4px;
   }
   .cal-nav-btn {
     background: none;
@@ -167,14 +166,15 @@
     font-size: 1.1rem;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 4px 8px;
   }
   
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
+    gap: 2px;
     text-align: center;
+    width: 100%;
     animation: fadeIn 0.3s ease-out;
   }
   @keyframes fadeIn {
@@ -183,19 +183,19 @@
   }
 
   .cal-day-name {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
-    padding-bottom: 4px;
+    padding-bottom: 2px;
     font-weight: 600;
   }
   .cal-cell {
-    min-height: 52px;
-    border-radius: 5px;
+    min-height: 44px;
+    border-radius: 4px;
     background: #fdfdfd;
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
-    padding: 2px;
+    padding: 1px;
     text-align: left;
     position: relative;
     overflow: hidden;
@@ -208,10 +208,10 @@
   }
   
   .cal-date-num {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     padding-left: 1px;
     display: flex;
     align-items: center;
@@ -223,19 +223,19 @@
   .today-badge {
     background-color: var(--today-color);
     color: #ffffff;
-    font-size: 0.5rem;
-    padding: 1px 3px;
+    font-size: 0.45rem;
+    padding: 1px 2px;
     border-radius: 2px;
-    margin-left: 3px;
+    margin-left: 2px;
     font-weight: 800;
     line-height: 1;
   }
   
   .cal-event-chip {
-    font-size: 0.6rem;
-    padding: 2px 3px;
-    border-radius: 3px;
-    margin-bottom: 2px;
+    font-size: 0.52rem;
+    padding: 1px 2px;
+    border-radius: 2px;
+    margin-bottom: 1px;
     color: #000000; 
     white-space: nowrap;
     overflow: hidden;
@@ -253,16 +253,16 @@
   .quick-menu-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
-    padding: 0 12px 12px 12px;
+    gap: 4px;
+    padding: 0 10px 10px 10px;
     width: 100%;
   }
   .quick-btn {
     background-color: #ffffff;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 8px 2px;
-    font-size: 0.65rem;
+    border-radius: 6px;
+    padding: 7px 1px;
+    font-size: 0.6rem; 
     font-weight: 700;
     color: var(--text-dark);
     text-align: center;
@@ -272,7 +272,7 @@
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     word-break: keep-all;
-    line-height: 1.2;
+    line-height: 1.15;
     transition: all 0.2s;
   }
   .quick-btn:hover {
@@ -290,16 +290,16 @@
 
   /* 일정 리스트 영역 */
   .schedule-container {
-    padding: 0 12px 30px 12px;
+    padding: 0 10px 30px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
   }
 
   .event-card {
     background: var(--card-bg);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     border: 1px solid rgba(0,0,0,0.04);
     overflow: hidden;
@@ -308,7 +308,7 @@
   .event-header {
     display: flex;
     flex-direction: column;
-    padding: 15px 18px;
+    padding: 12px 15px;
     cursor: pointer;
     background: transparent;
     border: none;
@@ -320,36 +320,36 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 6px; 
+    gap: 5px; 
     width: 100%;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     flex-wrap: wrap;
   }
 
   .event-date {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: #000000;
   }
   
   .event-divider {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #cbd5e0;
     font-weight: 700;
   }
 
   .event-location {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 600;
     text-align: left;
   }
 
   .event-title {
-    font-size: 1.05rem; 
+    font-size: 1rem; 
     font-weight: 600;
     color: var(--text-dark);
-    line-height: 1.4;
+    line-height: 1.35;
     word-break: keep-all;
     margin-top: 2px;
   }
@@ -371,16 +371,16 @@
     z-index: 1000;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 12px;
     box-sizing: border-box;
   }
 
   .modal-content {
     background: #ffffff;
     width: 100%;
-    max-width: 420px;
-    border-radius: 16px;
-    padding: 20px;
+    max-width: 400px;
+    border-radius: 14px;
+    padding: 18px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
     animation: slideUp 0.3s ease-out;
@@ -395,22 +395,22 @@
 
   .modal-close {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     background: none;
     border: none;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     cursor: pointer;
     color: #a0aec0;
     z-index: 10;
   }
   
   .modal-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 12px;
-    line-height: 1.4;
+    margin-bottom: 10px;
+    line-height: 1.35;
     padding-right: 25px;
     word-break: keep-all;
   }
@@ -419,15 +419,15 @@
   }
 
   .modal-detail-row {
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     display: flex;
-    font-size: 0.85rem;
-    line-height: 1.5;
+    font-size: 0.82rem;
+    line-height: 1.45;
   }
   .modal-label {
     font-weight: 700;
     color: var(--text-muted);
-    width: 75px;
+    width: 70px;
     flex-shrink: 0;
   }
   .modal-value {
@@ -440,14 +440,14 @@
     text-align: center;
     padding: 30px;
     color: var(--primary-color);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: bold;
   }
   .no-data {
     text-align: center;
     padding: 30px;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 </style>
 </head>
@@ -460,12 +460,10 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
-  <!-- 상단 월별 필터 버튼 영역 -->
   <div class="month-filters" id="filterContainer">
     <button class="filter-btn active" data-month="all">26년</button>
   </div>
 
-  <!-- 달력 영역 -->
   <div class="calendar-wrapper" id="calendarWrapper">
     <div class="cal-header">
       <button class="cal-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
@@ -476,7 +474,6 @@
     </div>
   </div>
 
-  <!-- 1행 4열 바로가기 버튼 영역 -->
   <div class="quick-menu-container">
     <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
     <div class="quick-btn empty-slot">준비중</div>
