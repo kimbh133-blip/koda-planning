@@ -24,7 +24,6 @@
   /* 고급스러운 모바일 최적화 테마 */
   :root {
     --primary-color: #0052cc; 
-    --koda-blue: #0088ff; 
     --accent-color: #c5a977; 
     --bg-color: #f4f6f9;
     --card-bg: #ffffff;
@@ -65,13 +64,12 @@
     position: relative;
   }
   .header img {
-    /* 이미지 크기를 기존 45px에서 35px로 축소 */
-    height: 35px; 
+    /* 요청하신 대로 타이틀 이미지 크기를 더 줄였습니다 (30px) */
+    height: 30px; 
     width: auto;
     object-fit: contain;
   }
   
-  /* 작고 옅은 회색 스타일의 설치 버튼 */
   .install-btn {
     position: absolute;
     right: 15px;
@@ -122,7 +120,7 @@
     border-radius: 12px;
     padding: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    overflow: hidden; /* 스와이프 시 삐져나감 방지 */
+    overflow: hidden; 
   }
   .cal-header {
     display: flex;
@@ -141,7 +139,6 @@
     padding: 5px 10px;
   }
   
-  /* 달력 화면 넘어갈 때 부드러운 효과 */
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -188,6 +185,10 @@
     align-items: center;
   }
   
+  /* 주말 및 공휴일 색상 클래스 */
+  .text-red { color: #e53e3e !important; }
+  .text-blue { color: #3182ce !important; }
+
   .today-badge {
     background-color: var(--today-color);
     color: #ffffff;
@@ -199,26 +200,23 @@
     line-height: 1;
   }
   
-  /* 달력 내 일정 미리보기 칩 (수정됨) */
+  /* 달력 내 일정 칩 디자인 통일 */
   .cal-event-chip {
     font-size: 0.65rem;
     padding: 3px 4px;
     border-radius: 4px;
     margin-bottom: 3px;
-    color: #000000; /* 모든 일정을 기본적으로 검은색 글씨로 변경 */
+    color: #000000; /* 모든 일정을 검은색 글씨로 고정 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: #e2e8f0; /* 일반 일정 배경은 옅은 회색으로 변경 */
+    background-color: #e2e8f0; /* 일반 일정 및 대강당 일정은 옅은 회색으로 통일 */
     font-weight: 600;
     cursor: pointer;
   }
   .cal-event-chip.chairman {
-    background-color: #d0e1fd; /* 회장님 참석 일정만 파스텔 톤 푸른색 적용 */
-    color: #000000; /* 검은색 글씨 유지 */
-  }
-  .cal-event-chip.koda-hall {
-    background-color: #aed0ff; /* KODA 대강당 일정 (필요 시 구분) */
+    background-color: #d0e1fd; /* 회장님 참석 일정만 파스텔 푸른색 */
+    color: #000000;
   }
 
   .schedule-container {
@@ -381,14 +379,11 @@
 
 <div class="app-container">
   <div class="header">
-    <!-- 요청하신 원본 타이틀 이미지로 설정 -->
     <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
-    <!-- 앱으로 설치 버튼 (회색 디자인 적용) -->
     <button id="installBtn" class="install-btn" style="display: none;">앱으로 설치</button>
   </div>
 
   <div class="month-filters" id="filterContainer">
-    <!-- 문구 2026년으로 변경 -->
     <button class="filter-btn active" data-month="all">2026년</button>
   </div>
 
@@ -398,7 +393,7 @@
       <span id="calMonthDisplay"></span>
       <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
     </div>
-    <!-- 캘린더 그리드 (터치 스와이프) -->
+    <!-- 캘린더 그리드 -->
     <div class="cal-grid" id="calendarGrid">
     </div>
   </div>
@@ -462,6 +457,22 @@
 
   let calYear = currentYear;
   let calMonth = currentMonth; 
+
+  // 2026년 기준 대한민국 주요 공휴일 (월-일 포맷)
+  const holidays2026 = [
+    "01-01", // 신정
+    "02-16", "02-17", "02-18", // 설날
+    "03-01", "03-02", // 삼일절 및 대체공휴일
+    "05-05", // 어린이날
+    "05-24", "05-25", // 부처님오신날 및 대체공휴일
+    "06-03", // 제9회 전국동시지방선거
+    "06-06", // 현충일
+    "08-15", "08-17", // 광복절 및 대체공휴일
+    "09-24", "09-25", "09-26", // 추석
+    "10-03", "10-05", // 개천절 및 대체공휴일
+    "10-09", // 한글날
+    "12-25"  // 크리스마스
+  ];
 
   function parseCSV(csv) {
     const rows = [];
@@ -540,7 +551,6 @@
     const grid = document.getElementById('calendarGrid');
     const display = document.getElementById('calMonthDisplay');
     
-    // 달력을 리렌더링할 때 애니메이션 다시 트리거
     grid.style.animation = 'none';
     grid.offsetHeight; 
     grid.style.animation = 'fadeIn 0.3s ease-out';
@@ -549,8 +559,13 @@
     display.innerText = `${calYear}년 ${calMonth}월`;
 
     const days = ['일', '월', '화', '수', '목', '금', '토'];
-    days.forEach(day => {
-      grid.innerHTML += `<div class="cal-day-name">${day}</div>`;
+    days.forEach((day, index) => {
+      let dayClass = "cal-day-name";
+      // 일요일(0)은 빨간색, 토요일(6)은 파란색
+      if (index === 0) dayClass += " text-red";
+      else if (index === 6) dayClass += " text-blue";
+      
+      grid.innerHTML += `<div class="${dayClass}">${day}</div>`;
     });
 
     const firstDayIndex = new Date(calYear, calMonth - 1, 1).getDay();
@@ -567,11 +582,9 @@
       dayEvents.forEach(e => {
         const globalIndex = scheduleData.indexOf(e);
         const isChairman = e.note.includes("회장님 참석");
-        const isKodaHall = e.location.includes("KODA") || e.location.includes("대강당");
         
         let chipClass = "cal-event-chip";
         if (isChairman) chipClass += " chairman";
-        if (isKodaHall) chipClass += " koda-hall";
 
         const shortTitle = e.title.length > 7 ? e.title.substring(0, 7) + '..' : e.title;
         eventsHtml += `<div class="${chipClass}" onclick="openModal(${globalIndex}); event.stopPropagation();">${shortTitle}</div>`;
@@ -581,9 +594,20 @@
       const cellClass = isToday ? "cal-cell today" : "cal-cell";
       const todayBadge = isToday ? `<span class="today-badge">TODAY</span>` : "";
 
+      // 날짜별 색상 판별 로직 (주말 및 공휴일)
+      const currentDayOfWeek = new Date(calYear, calMonth - 1, d).getDay();
+      const mmdd = String(calMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      let dateNumClass = "cal-date-num";
+      
+      if (currentDayOfWeek === 0 || holidays2026.includes(mmdd)) {
+        dateNumClass += " text-red";
+      } else if (currentDayOfWeek === 6) {
+        dateNumClass += " text-blue";
+      }
+
       grid.innerHTML += `
         <div class="${cellClass}">
-          <div class="cal-date-num">${d}${todayBadge}</div>
+          <div class="${dateNumClass}">${d}${todayBadge}</div>
           ${eventsHtml}
         </div>
       `;
