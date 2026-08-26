@@ -51,7 +51,7 @@
     background: var(--bg-color);
   }
 
-  /* 헤더 영역 및 우측 상단 설치 버튼, 왼쪽 상단 새로고침 버튼 */
+  /* 헤더 영역 및 우측 상단 버튼 그룹, 왼쪽 새로고침 버튼 */
   .header {
     background-color: var(--card-bg);
     padding: 15px 15px;
@@ -69,7 +69,6 @@
     object-fit: contain;
   }
   
-  /* 맨 왼쪽 상단 조그마한 옅은 회색 '일정 새로고침' 버튼 */
   .refresh-btn {
     position: absolute;
     left: 15px;
@@ -85,17 +84,30 @@
     color: #718096;
   }
 
-  .install-btn {
+  /* 우측 상단 버튼들을 나란히 배치하기 위한 영역 */
+  .header-right-btns {
     position: absolute;
     right: 15px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* 협회소식 및 앱 설치 버튼 공통 스타일 (작고 옅은 회색) */
+  .header-btn {
     background-color: transparent;
-    color: #a0aec0;
-    border: 1px solid #e2e8f0;
+    color: #718096;
+    border: 1px solid #cbd5e0;
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .header-btn:hover {
+    background-color: #f7fafc;
   }
 
   /* 월별 필터 영역 */
@@ -418,10 +430,14 @@
 
 <div class="app-container">
   <div class="header">
-    <!-- 맨 왼쪽 상단 조그마한 옅은 회색 '일정 새로고침' 버튼 추가 -->
     <button class="refresh-btn" onclick="manualRefresh()">일정 새로고침</button>
     <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
-    <button id="installBtn" class="install-btn" style="display: none;">앱으로 설치</button>
+    
+    <!-- 우측 상단 버튼 그룹: 협회소식 링크 버튼 + 앱으로 설치 버튼 -->
+    <div class="header-right-btns">
+      <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="header-btn">협회소식</a>
+      <button id="installBtn" class="header-btn" style="display: none;">앱설치</button>
+    </div>
   </div>
 
   <div class="month-filters" id="filterContainer">
@@ -576,7 +592,6 @@
     return dataArr;
   }
 
-  // 수동 새로고침 버튼 클릭 시 실행되는 함수
   async function manualRefresh() {
     scheduleContainer.innerHTML = `<div class="loading-msg">최신 일정을 새로고침 중입니다...⏳</div>`;
     await loadData();
@@ -584,7 +599,6 @@
 
   async function loadData() {
     try {
-      // 캐시 방지를 위해 고유 타임스탬프 파라미터 추가
       const response = await fetch(GOOGLE_SHEET_CSV_URL + "&t=" + new Date().getTime());
       const csvText = await response.text();
       scheduleData = parseCSV(csvText);
@@ -798,7 +812,7 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    installBtn.style.display = 'block'; 
+    installBtn.style.display = 'inline-block'; 
 
     installBtn.addEventListener('click', () => {
       installBtn.style.display = 'none';
@@ -816,7 +830,7 @@
   const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
 
   if (isIos() && !isInStandaloneMode()) {
-    installBtn.style.display = 'block';
+    installBtn.style.display = 'inline-block';
     installBtn.addEventListener('click', () => {
       alert("아이폰 화면 맨 아래의 '공유(내보내기) [↑]' 버튼을 누른 후,\n'홈 화면에 추가 [+]'를 선택해주세요!");
     });
