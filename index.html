@@ -97,50 +97,12 @@
     cursor: pointer;
   }
 
-  /* 1행 4열 바로가기 버튼 영역 (달력과 월별 버튼 사이 배치) */
-  .quick-menu-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    padding: 15px 15px 0 15px;
-  }
-  .quick-btn {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    word-break: keep-all;
-    line-height: 1.2;
-    transition: all 0.2s;
-  }
-  .quick-btn:hover {
-    background-color: #f7fafc;
-    border-color: #cbd5e0;
-  }
-  .quick-btn.empty-slot {
-    color: #cbd5e0;
-    border-style: dashed;
-    cursor: default;
-  }
-  .quick-btn.empty-slot:hover {
-    background-color: #ffffff;
-  }
-
-  /* 월별 필터 영역 */
+  /* 월별 필터 영역 (맨 위로 이동) */
   .month-filters {
     display: flex;
     gap: 4px;
     padding: 0 15px;
-    margin-top: 12px;
+    margin-top: 15px;
     background: transparent;
     overflow-x: visible;
   }
@@ -167,7 +129,7 @@
 
   .calendar-wrapper {
     background: var(--card-bg);
-    margin: 15px;
+    margin: 15px 15px 10px 15px;
     border-radius: 12px;
     padding: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
@@ -266,6 +228,44 @@
   .cal-event-chip.chairman {
     background-color: #d0e1fd; 
     color: #000000;
+  }
+
+  /* 1행 4열 바로가기 버튼 영역 (달력 바로 아래 배치) */
+  .quick-menu-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 0 15px 15px 15px;
+  }
+  .quick-btn {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 2px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    word-break: keep-all;
+    line-height: 1.2;
+    transition: all 0.2s;
+  }
+  .quick-btn:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+  }
+  .quick-btn.empty-slot {
+    color: #cbd5e0;
+    border-style: dashed;
+    cursor: default;
+  }
+  .quick-btn.empty-slot:hover {
+    background-color: #ffffff;
   }
 
   .schedule-container {
@@ -436,19 +436,12 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
-  <!-- 1행 4열 바로가기 버튼 영역 -->
-  <div class="quick-menu-container">
-    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
-    <div class="quick-btn empty-slot">준비중</div>
-    <div class="quick-btn empty-slot">준비중</div>
-    <div class="quick-btn empty-slot">준비중</div>
-  </div>
-
   <!-- 상단 월별 필터 버튼 영역 -->
   <div class="month-filters" id="filterContainer">
     <button class="filter-btn active" data-month="all">26년</button>
   </div>
 
+  <!-- 달력 영역 -->
   <div class="calendar-wrapper" id="calendarWrapper">
     <div class="cal-header">
       <button class="cal-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
@@ -457,6 +450,14 @@
     </div>
     <div class="cal-grid" id="calendarGrid">
     </div>
+  </div>
+
+  <!-- 1행 4열 바로가기 버튼 영역 (달력 바로 아래 배치) -->
+  <div class="quick-menu-container">
+    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
+    <div class="quick-btn empty-slot">준비중</div>
+    <div class="quick-btn empty-slot">준비중</div>
+    <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
   </div>
 
   <div class="schedule-container" id="scheduleContainer">
