@@ -5,12 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>한국디벨로퍼협회(KODA) 일정 안내</title>
 
-<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 추가 -->
+<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="KODA 일정">
 <link rel="apple-touch-icon" href="스크린샷 2026-08-25 162451.png">
 <link rel="manifest" href="manifest.json">
+
+<!-- 카카오톡 인앱 브라우저 강제 탈출 스크립트 -->
+<script>
+  var userAgent = navigator.userAgent.toLowerCase();
+  if(userAgent.indexOf('kakaotalk') > -1){
+    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href);
+  }
+</script>
 
 <style>
   /* 고급스러운 모바일 최적화 테마 */
@@ -34,7 +42,6 @@
     color: var(--text-dark);
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
-    /* 앱처럼 텍스트 선택 방지 (선택적) */
     user-select: none; 
     -webkit-user-select: none;
   }
@@ -45,6 +52,7 @@
     background: var(--bg-color);
   }
 
+  /* 헤더 영역 및 우측 상단 설치 버튼 */
   .header {
     background-color: var(--card-bg);
     padding: 15px 15px;
@@ -54,11 +62,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
   }
   .header img {
     height: 45px; 
     width: auto;
     object-fit: contain;
+  }
+  
+  .install-btn {
+    position: absolute;
+    right: 15px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,82,204,0.3);
   }
 
   .month-filters {
@@ -347,6 +370,8 @@
 <div class="app-container">
   <div class="header">
     <img src="스크린샷 2026-08-25 162451.png" alt="KODA 로고">
+    <!-- 설치 버튼 추가 (기본은 숨김 처리, 조건에 맞을 때만 표시) -->
+    <button id="installBtn" class="install-btn" style="display: none;">홈화면에 설치</button>
   </div>
 
   <div class="month-filters" id="filterContainer">
@@ -643,6 +668,41 @@
       renderSchedules(selectedFilter);
     });
   });
+
+  // --- 홈화면 설치 버튼 로직 ---
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  // 1. 안드로이드 기기 (크롬 등)
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block'; // 설치 조건 만족 시 버튼 표시
+
+    installBtn.addEventListener('click', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        deferredPrompt = null;
+      });
+    });
+  });
+
+  // 2. 아이폰 기기 (사파리) 
+  // 애플은 자동 설치 알림을 막아두었기 때문에 수동으로 안내창을 띄워줍니다.
+  const isIos = () => {
+    const ua = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test(ua);
+  };
+  const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+  // 아이폰이면서 아직 앱으로 실행된 상태(standalone)가 아닐 때만 버튼을 보여줍니다.
+  if (isIos() && !isInStandaloneMode()) {
+    installBtn.style.display = 'block';
+    installBtn.addEventListener('click', () => {
+      alert("아이폰 화면 맨 아래의 '공유(내보내기) [↑]' 버튼을 누른 후,\n'홈 화면에 추가 [+]'를 선택해주세요!");
+    });
+  }
 
   loadData();
 
