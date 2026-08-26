@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국디벨로퍼협회(KODA) 일정 안내</title>
+<style>
+  /* 고급스러운 모바일 최적화 테마 */
+  :root {
+    --primary-color: #0052cc; /* 회장님 일정 - 쨍하고 고급스러운 푸른색 */
+    --koda-blue: #0088ff; /* 협회 대강당(KODA) 달력 포인트 */
+    --accent-color: #c5a977; /* 샴페인 골드 (포인트 색상) */
+    --bg-color: #f4f6f9;
+    --card-bg: #ffffff;
+    --text-dark: #1a202c;
+    --text-muted: #718096;
+    --border-color: #e2e8f0;
+    --today-color: #e53e3e; /* TODAY 강조 색상 (빨강) */
+  }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+    color: var(--text-dark);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app-container {
+    max-width: 100%;
+    margin: 0 auto;
+    background: var(--bg-color);
+  }
+
+  /* 상단 헤더 (이미지 로고로 변경) */
+  .header {
+    background-color: var(--card-bg);
+    padding: 15px 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .header img {
+    height: 45px; /* 로고가 자연스럽게 보이도록 높이 지정 */
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* 월별 필터 (가로 스크롤) */
+  .month-filters {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 15px;
+    background: var(--card-bg);
+    white-space: nowrap;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .month-filters::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+  .filter-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .filter-btn.active {
+    background-color: var(--text-dark);
+    color: #ffffff;
+    border-color: var(--text-dark);
+  }
+
+  /* 달력 영역 */
+  .calendar-wrapper {
+    background: var(--card-bg);
+    margin: 15px;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  }
+  .cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .cal-nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .cal-day-name {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-bottom: 5px;
+    font-weight: 600;
+  }
+  .cal-cell {
+    min-height: 60px;
+    border-radius: 6px;
+    background: #fdfdfd;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+    text-align: left;
+    position: relative;
+  }
+  .cal-cell.empty { background: transparent; border: none; }
+  
+  /* 오늘 날짜 (TODAY) 스타일 */
+  .cal-cell.today {
+    background: #fff5f5; 
+    border: 1.5px solid var(--today-color); 
+  }
+  
+  .cal-date-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+    padding-left: 2px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* TODAY 뱃지 스타일 */
+  .today-badge {
+    background-color: var(--today-color);
+    color: #ffffff;
+    font-size: 0.55rem;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  
+  /* 달력 내 일정 미리보기 칩 */
+  .cal-event-chip {
+    font-size: 0.65rem;
+    padding: 3px 4px;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: #a0aec0;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cal-event-chip.chairman {
+    background-color: var(--primary-color);
+  }
+  .cal-event-chip.koda-hall {
+    background-color: var(--koda-blue);
+  }
+
+  /* 일정 리스트 영역 */
+  .schedule-container {
+    padding: 0 15px 30px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 개별 일정 카드 (리스트 버튼) */
+  .event-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+
+  .event-header {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .event-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  /* 일시: 더 크게, 색상은 블랙으로 변경 */
+  .event-date {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #000000;
+  }
+  
+  /* 장소: 더 크게 변경 */
+  .event-location {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  /* 행사명: 약간 작게 조정 */
+  .event-title {
+    font-size: 1.15rem; 
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.4;
+    word-break: keep-all;
+    margin-top: 4px;
+  }
+  
+  /* 회장님 참석 행사명 */
+  .event-title.chairman {
+    color: var(--primary-color);
+    font-weight: 800;
+  }
+
+  /* 팝업(모달) 스타일 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .modal-content {
+    background: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #a0aec0;
+  }
+  
+  .modal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    line-height: 1.4;
+    padding-right: 20px;
+    word-break: keep-all;
+  }
+  .modal-title.chairman {
+    color: var(--primary-color);
+  }
+
+  .modal-detail-row {
+    margin-bottom: 12px;
+    display: flex;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .modal-label {
+    font-weight: 700;
+    color: var(--text-muted);
+    width: 90px;
+    flex-shrink: 0;
+  }
+  .modal-value {
+    color: var(--text-dark);
+    flex-grow: 1;
+    word-break: keep-all;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <!-- 텍스트 타이틀 대신 요청하신 로고 이미지를 삽입했습니다 -->
+    <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
+  </div>
+
+  <!-- 상단 월별 필터 -->
+  <div class="month-filters" id="filterContainer">
+    <button class="filter-btn active" data-month="all">전체보기</button>
+  </div>
+
+  <!-- 달력 영역 -->
+  <div class="calendar-wrapper" id="calendarWrapper">
+    <div class="cal-header">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
+      <span id="calMonthDisplay"></span>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
+    </div>
+    <div class="cal-grid" id="calendarGrid">
+      <!-- 달력 렌더링 영역 -->
+    </div>
+  </div>
+
+  <!-- 일정 리스트 영역 -->
+  <div class="schedule-container" id="scheduleContainer">
+    <!-- 리스트 렌더링 영역 -->
+  </div>
+</div>
+
+<!-- 상세 일정 팝업 (모달) -->
+<div class="modal-overlay" id="eventModal" onclick="closeModalOnOutsideClick(event)">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModalAction()">×</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-detail-row">
+      <span class="modal-label">일시</span>
+      <span class="modal-value" id="modalDate"></span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-label">장소</span>
+      <span class="modal-value" id="modalLocation"></span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-label">참석</span>
+      <span class="modal-value" id="modalAttendees"></span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-label">내용</span>
+      <span class="modal-value" id="modalContent"></span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-label">주최 / 주관</span>
+      <span class="modal-value" id="modalHost"></span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-label">비고</span>
+      <span class="modal-value" id="modalNote"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 구글 시트 원본 텍스트 데이터 연동
+  const scheduleData = [
+    { month: 8, day: 25, date: "08.25(화) 14:00~", location: "국토교통위원장실", title: "국회 유의동 국토교통위원장 간담회", attendees: "ㅡ", content: "개발업법, 건분법 제도개선 요청", host: "ㅡ", note: "회장님 참석" },
+    { month: 8, day: 28, date: "08.28(금) 10:00~", location: "정부서울청사 대회의실", title: "금융‧건설업계 간담회 킥오프회의", attendees: "금융위 부위원장, 국토부 1차관, 금융관련 기관장 등", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 8, day: 31, date: "08.31(월) 10:00~", location: "국회도서관 대강당", title: "AI시대의 데이터센터 건설산업 육성과 공급전략 국회 세미나", attendees: "박덕흠 국회부의장, 유의동 국토위원장 등", content: "ㅡ", host: "국회", note: "회장님 참석" },
+    { month: 9, day: 1, date: "09.01(화) 16:00~", location: "HUG 본사(부산)", title: "HUG 최인호 사장 간담회", attendees: "김한모 회장, 김대건 수석부회장, 문길주 정책위원장, 이낙승 대외협력위원장, 정주영 미래인회장, 채창호 대성문대표", content: "최인호 사장 감사패 전달 등", host: "ㅡ", note: "회장님 참석" },
+    { month: 9, day: 2, date: "09.02(수) 11:00~", location: "명선헌", title: "한국부동산경제단체연합회 단체장 간담회", attendees: "ㅡ", content: "제11회 부동산산업의 날 행사 개최 알림", host: "한국공인중개사협회", note: "회장님 참석" },
+    { month: 9, day: 3, date: "09.03(목)", location: "KODA", title: "KODA-KB증권 MOU 협약식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 9, day: 8, date: "09.08(화) 08:30~", location: "장충 아레나", title: "제27회 세계지식포럼", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 9, day: 8, date: "09.08(화) 14:00~", location: "KODA", title: "도심 주거안정과 상생을 위한 전략 토론회", attendees: "ㅡ", content: "ㅡ", host: "KODA / 교육위원회", note: "ㅡ" },
+    { month: 9, day: 8, date: "09.08(화) 17:00~", location: "KODA", title: "Spatial AI Connect 부동산개발 AI 서비스기업 설명회", attendees: "ㅡ", content: "ㅡ", host: "KODA / 건설위원회", note: "ㅡ" },
+    { month: 9, day: 9, date: "09.09(수) 14:00~", location: "세종대 광개토관", title: "한국공인중개사협회 창립 40주년 기념식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 9, day: 10, date: "09.10(목) 17:00~", location: "라움 레벤홀", title: "ARPY 6기 입학식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "ㅡ" },
+    { month: 9, day: 11, date: "09.11(금) 11:00~", location: "KODA", title: "KODA-해외건설협회 MOU 협약식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 9, day: 11, date: "09.11(금) 13:00~", location: "국회의원회관 대회의실", title: "세계언론협회(WPA) 대한민국 보건복지 정책포럼 및 시상식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 9, day: 14, date: "09.14(월) 14:00~", location: "KODA", title: "9월 운영위원회 회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 9, day: 15, date: "09.15(화) 13:00~", location: "금융감독원", title: "全금융권 PF사업장 합동 매각설명회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "ㅡ" },
+    { month: 9, day: 18, date: "09.18(금) 14:00~", location: "KODA", title: "제1차 미래도시주택포럼 총회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 9, day: 30, date: "09.30(수)~10.01(목)", location: "코엑스D홀", title: "집코노미 박람회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
+    { month: 10, day: 12, date: "10.12(월) 14:00~", location: "KODA", title: "10월 전체 임원회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 10, day: 13, date: "10.13(화) 14:30~", location: "KODA", title: "‘건설에서 조립으로, OSC 건설의 가능성’ 세미나", attendees: "ㅡ", content: "ㅡ", host: "KODA / 교육위원회", note: "ㅡ" },
+    { month: 10, day: 26, date: "10.26(월) 11:00~", location: "리베라C.C", title: "협회장배 KODA-ARP 골프대회", attendees: "협회 임원, ARP 총동문회, 회원사 대표 등 160인", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 10, day: 30, date: "10.30(금)~10.31(토)", location: "광주MBC", title: "Deep in Cities-Gwangju 국제컨퍼런스", attendees: "ㅡ", content: "ㅡ", host: "KODA호남지회", note: "ㅡ" },
+    { month: 11, day: 9, date: "11.09(월) 14:00~", location: "KODA", title: "11월 운영위원회 회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 11, day: 11, date: "11.11(수) 10:00~", location: "건설회관", title: "제11회 부동산산업의 날 개최", attendees: "ㅡ", content: "ㅡ", host: "한국부동산경제단체연합회", note: "회장님 참석" },
+    { month: 12, day: 7, date: "12.07(월) 17:00~", location: "라움", title: "ARP 12기 수료식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
+    { month: 12, day: 7, date: "12.07(월) 17:00~", location: "미정", title: "ARP 총동문회 송년회", attendees: "ㅡ", content: "ㅡ", host: "KODA-ARP", note: "회장님 참석" },
+    { month: 12, day: 10, date: "12.10(목) 18:00~", location: "라움", title: "ARPY 6기 수료식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "ㅡ" },
+    { month: 12, day: 14, date: "12.14(월) 16:00~", location: "KODA", title: "KODA 임원 전체회의 및 송년의 밤", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" }
+  ];
+
+  // 필터 버튼 생성
+  const filterContainer = document.getElementById('filterContainer');
+  for(let i = 1; i <= 12; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.month = i;
+    btn.innerText = `${i}월`;
+    filterContainer.appendChild(btn);
+  }
+
+  const scheduleContainer = document.getElementById('scheduleContainer');
+
+  // 현재 시간(TODAY) 정보
+  const todayDateObj = new Date();
+  const currentYear = todayDateObj.getFullYear();
+  const currentMonth = todayDateObj.getMonth() + 1;
+  const currentDay = todayDateObj.getDate();
+
+  let calYear = currentYear;
+  let calMonth = currentMonth; 
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const display = document.getElementById('calMonthDisplay');
+    grid.innerHTML = '';
+    display.innerText = `${calYear}년 ${calMonth}월`;
+
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    days.forEach(day => {
+      grid.innerHTML += `<div class="cal-day-name">${day}</div>`;
+    });
+
+    const firstDayIndex = new Date(calYear, calMonth - 1, 1).getDay();
+    const lastDay = new Date(calYear, calMonth, 0).getDate();
+
+    for(let i = 0; i < firstDayIndex; i++) {
+      grid.innerHTML += `<div class="cal-cell empty"></div>`;
+    }
+
+    for(let d = 1; d <= lastDay; d++) {
+      const dayEvents = scheduleData.filter(e => e.month === calMonth && e.day === d);
+      
+      let eventsHtml = '';
+      dayEvents.forEach(e => {
+        const globalIndex = scheduleData.indexOf(e);
+        const isChairman = e.note.includes("회장님 참석");
+        const isKodaHall = e.location.includes("KODA") || e.location.includes("대강당");
+        
+        let chipClass = "cal-event-chip";
+        if (isChairman) chipClass += " chairman";
+        if (isKodaHall) chipClass += " koda-hall";
+
+        const shortTitle = e.title.length > 7 ? e.title.substring(0, 7) + '..' : e.title;
+        eventsHtml += `<div class="${chipClass}" onclick="openModal(${globalIndex}); event.stopPropagation();">${shortTitle}</div>`;
+      });
+
+      const isToday = (calYear === currentYear && calMonth === currentMonth && d === currentDay);
+      const cellClass = isToday ? "cal-cell today" : "cal-cell";
+      const todayBadge = isToday ? `<span class="today-badge">TODAY</span>` : "";
+
+      grid.innerHTML += `
+        <div class="${cellClass}">
+          <div class="cal-date-num">${d}${todayBadge}</div>
+          ${eventsHtml}
+        </div>
+      `;
+    }
+  }
+
+  window.changeMonth = function(offset) {
+    calMonth += offset;
+    if(calMonth > 12) { calMonth = 1; calYear++; }
+    else if(calMonth < 1) { calMonth = 12; calYear--; }
+    renderCalendar();
+  };
+
+  function renderSchedules(filterMonth) {
+    scheduleContainer.innerHTML = '';
+    
+    const currentFilteredData = filterMonth === 'all' 
+      ? scheduleData 
+      : scheduleData.filter(event => event.month == filterMonth);
+
+    if (currentFilteredData.length === 0) {
+      scheduleContainer.innerHTML = `<div class="no-data">등록된 일정이 없습니다.</div>`;
+      return;
+    }
+
+    currentFilteredData.forEach(event => {
+      const globalIndex = scheduleData.indexOf(event);
+      const isChairman = event.note.includes("회장님 참석");
+      const titleClass = isChairman ? "event-title chairman" : "event-title";
+
+      const card = document.createElement('div');
+      card.className = 'event-card';
+
+      card.innerHTML = `
+        <button class="event-header" onclick="openModal(${globalIndex})">
+          <div class="event-meta">
+            <div class="event-date">${event.date}</div>
+            <div class="event-location">${event.location}</div>
+          </div>
+          <div class="${titleClass}">${event.title}</div>
+        </button>
+      `;
+      scheduleContainer.appendChild(card);
+    });
+  }
+
+  // --- 모달 팝업 및 모바일 뒤로가기 연동 (History API) ---
+  
+  // 브라우저 혹은 모바일 뒤로가기 감지 시 모달 숨김 처리
+  window.addEventListener('popstate', function(event) {
+    hideModalDOM();
+  });
+
+  // 모달 화면 노출 및 History 스택 쌓기
+  window.openModal = function(globalIndex) {
+    const event = scheduleData[globalIndex];
+    const isChairman = event.note.includes("회장님 참석");
+    
+    const titleEl = document.getElementById('modalTitle');
+    titleEl.innerText = event.title;
+    titleEl.className = isChairman ? "modal-title chairman" : "modal-title";
+
+    document.getElementById('modalDate').innerText = event.date;
+    document.getElementById('modalLocation').innerText = event.location;
+    document.getElementById('modalAttendees').innerText = event.attendees;
+    document.getElementById('modalContent').innerText = event.content;
+    document.getElementById('modalHost').innerText = event.host;
+    document.getElementById('modalNote').innerText = event.note;
+
+    document.getElementById('eventModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // 히스토리 스택 추가 (뒤로가기 시 이 상태가 pop 됩니다)
+    history.pushState({ modalOpen: true }, "", "");
+  };
+
+  // 모달 DOM 닫기 처리
+  function hideModalDOM() {
+    document.getElementById('eventModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  // X 버튼 클릭 시 수동으로 뒤로가기 실행 (popstate 이벤트 유발)
+  window.closeModalAction = function() {
+    history.back(); 
+  };
+
+  // 모달 외부 영역(배경) 클릭 시 닫기
+  window.closeModalOnOutsideClick = function(e) {
+    if(e.target.id === 'eventModal') {
+      history.back();
+    }
+  };
+
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      const selectedFilter = e.target.dataset.month;
+      
+      if (selectedFilter === 'all') {
+        calYear = currentYear;
+        calMonth = currentMonth;
+      } else {
+        calMonth = parseInt(selectedFilter);
+      }
+      
+      renderCalendar();
+      renderSchedules(selectedFilter);
+    });
+  });
+
+  renderCalendar();
+  renderSchedules('all');
+
+</script>
+</body>
+</html>
