@@ -64,7 +64,6 @@
     position: relative;
   }
   .header img {
-    /* 요청하신 대로 타이틀 이미지 크기를 더 줄였습니다 (30px) */
     height: 30px; 
     width: auto;
     object-fit: contain;
@@ -185,7 +184,6 @@
     align-items: center;
   }
   
-  /* 주말 및 공휴일 색상 클래스 */
   .text-red { color: #e53e3e !important; }
   .text-blue { color: #3182ce !important; }
 
@@ -200,22 +198,21 @@
     line-height: 1;
   }
   
-  /* 달력 내 일정 칩 디자인 통일 */
   .cal-event-chip {
     font-size: 0.65rem;
     padding: 3px 4px;
     border-radius: 4px;
     margin-bottom: 3px;
-    color: #000000; /* 모든 일정을 검은색 글씨로 고정 */
+    color: #000000; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: #e2e8f0; /* 일반 일정 및 대강당 일정은 옅은 회색으로 통일 */
+    background-color: #e2e8f0; 
     font-weight: 600;
     cursor: pointer;
   }
   .cal-event-chip.chairman {
-    background-color: #d0e1fd; /* 회장님 참석 일정만 파스텔 푸른색 */
+    background-color: #d0e1fd; 
     color: #000000;
   }
 
@@ -393,7 +390,6 @@
       <span id="calMonthDisplay"></span>
       <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
     </div>
-    <!-- 캘린더 그리드 -->
     <div class="cal-grid" id="calendarGrid">
     </div>
   </div>
@@ -438,6 +434,7 @@
   const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEbM8YAc7jQes9oX6_-aVsVib2H40avHQkL6TkRRI2cYmw7nYG29F_1lGGz-2gL0nve4Q91MBM02Q-/pub?output=csv";
   
   let scheduleData = [];
+  let currentSelectedMonth = 'all'; // 현재 선택된 월 상태 관리 ('all' 또는 숫자 1~12)
 
   const filterContainer = document.getElementById('filterContainer');
   for(let i = 1; i <= 12; i++) {
@@ -458,20 +455,19 @@
   let calYear = currentYear;
   let calMonth = currentMonth; 
 
-  // 2026년 기준 대한민국 주요 공휴일 (월-일 포맷)
   const holidays2026 = [
-    "01-01", // 신정
-    "02-16", "02-17", "02-18", // 설날
-    "03-01", "03-02", // 삼일절 및 대체공휴일
-    "05-05", // 어린이날
-    "05-24", "05-25", // 부처님오신날 및 대체공휴일
-    "06-03", // 제9회 전국동시지방선거
-    "06-06", // 현충일
-    "08-15", "08-17", // 광복절 및 대체공휴일
-    "09-24", "09-25", "09-26", // 추석
-    "10-03", "10-05", // 개천절 및 대체공휴일
-    "10-09", // 한글날
-    "12-25"  // 크리스마스
+    "01-01", 
+    "02-16", "02-17", "02-18", 
+    "03-01", "03-02", 
+    "05-05", 
+    "05-24", "05-25", 
+    "06-03", 
+    "06-06", 
+    "08-15", "08-17", 
+    "09-24", "09-25", "09-26", 
+    "10-03", "10-05", 
+    "10-09", 
+    "12-25"  
   ];
 
   function parseCSV(csv) {
@@ -539,12 +535,17 @@
       const response = await fetch(GOOGLE_SHEET_CSV_URL);
       const csvText = await response.text();
       scheduleData = parseCSV(csvText);
-      renderCalendar();
-      renderSchedules('all');
+      updateView();
     } catch (error) {
       console.error("데이터 연동 실패:", error);
       scheduleContainer.innerHTML = `<div class="no-data">일정을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.</div>`;
     }
+  }
+
+  // 화면 전체(달력 + 목록)를 현재 상태에 맞춰 갱신하는 통합 함수
+  function updateView() {
+    renderCalendar();
+    renderSchedules(currentSelectedMonth);
   }
 
   function renderCalendar() {
@@ -561,10 +562,8 @@
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     days.forEach((day, index) => {
       let dayClass = "cal-day-name";
-      // 일요일(0)은 빨간색, 토요일(6)은 파란색
       if (index === 0) dayClass += " text-red";
       else if (index === 6) dayClass += " text-blue";
-      
       grid.innerHTML += `<div class="${dayClass}">${day}</div>`;
     });
 
@@ -594,7 +593,6 @@
       const cellClass = isToday ? "cal-cell today" : "cal-cell";
       const todayBadge = isToday ? `<span class="today-badge">TODAY</span>` : "";
 
-      // 날짜별 색상 판별 로직 (주말 및 공휴일)
       const currentDayOfWeek = new Date(calYear, calMonth - 1, d).getDay();
       const mmdd = String(calMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
       let dateNumClass = "cal-date-num";
@@ -614,12 +612,30 @@
     }
   }
 
+  // 달력 월 변경 (버튼 또는 스와이프 시 아래 목록도 해당 월로 자동 연동)
   window.changeMonth = function(offset) {
     calMonth += offset;
     if(calMonth > 12) { calMonth = 1; calYear++; }
     else if(calMonth < 1) { calMonth = 12; calYear--; }
-    renderCalendar();
+
+    // 월을 넘기면 상단 필터 상태도 해당 월로 동기화
+    currentSelectedMonth = calMonth;
+    syncFilterButtonsUI();
+
+    updateView();
   };
+
+  // 상단 월 버튼 UI 활성화 상태 동기화 함수
+  function syncFilterButtonsUI() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(b => {
+      if (b.dataset.month == currentSelectedMonth) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+  }
 
   function renderSchedules(filterMonth) {
     scheduleContainer.innerHTML = '';
@@ -695,6 +711,7 @@
     }
   };
 
+  // 상단 월별 필터 버튼 클릭 이벤트 (클릭 시 달력과 목록이 모두 해당 월로 연동)
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -702,6 +719,8 @@
       e.target.classList.add('active');
       const selectedFilter = e.target.dataset.month;
       
+      currentSelectedMonth = selectedFilter;
+
       if (selectedFilter === 'all') {
         calYear = currentYear;
         calMonth = currentMonth;
@@ -709,8 +728,7 @@
         calMonth = parseInt(selectedFilter);
       }
       
-      renderCalendar();
-      renderSchedules(selectedFilter);
+      updateView();
     });
   });
 
@@ -745,7 +763,7 @@
     });
   }
 
-  // --- 달력 스와이프 기능 ---
+  // --- 달력 스와이프 기능 (스와이프 시 목록도 함께 연동됨) ---
   const calendarWrapper = document.getElementById('calendarWrapper');
   let startX = 0;
   let endX = 0;
