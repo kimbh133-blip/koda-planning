@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>한국디벨로퍼협회(KODA) 일정 안내</title>
 
-<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 -->
+<!-- 모바일 홈 화면(PWA) 및 iOS 앱 설정 (아이콘은 심볼로 유지) -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="KODA 일정">
@@ -378,13 +378,14 @@
 
 <div class="app-container">
   <div class="header">
-    <img src="로고.png" alt="KODA 로고">
-    <!-- 설치 버튼 추가 (기본은 숨김 처리, 조건에 맞을 때만 표시) -->
+    <!-- 화면 상단에는 다시 원래 KODA 글씨가 있는 길쭉한 이미지 적용 -->
+    <img src="스크린샷 2026-08-25 162451.png" alt="KODA 로고">
+    <!-- 앱으로 설치 버튼 (회색 디자인 적용) -->
     <button id="installBtn" class="install-btn" style="display: none;">앱으로 설치</button>
   </div>
 
   <div class="month-filters" id="filterContainer">
-    <!-- 전체보기 글자를 2026년으로 변경 -->
+    <!-- 문구 2026년으로 변경 -->
     <button class="filter-btn active" data-month="all">2026년</button>
   </div>
 
@@ -394,7 +395,7 @@
       <span id="calMonthDisplay"></span>
       <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
     </div>
-    <!-- 캘린더 그리드 (터치 스와이프 기능 연동 영역) -->
+    <!-- 캘린더 그리드 (터치 스와이프) -->
     <div class="cal-grid" id="calendarGrid">
     </div>
   </div>
@@ -717,7 +718,7 @@
     });
   }
 
-  // --- 달력 스와이프 기능 (터치로 다음/이전 달 넘기기) ---
+  // --- 달력 스와이프 기능 ---
   const calendarWrapper = document.getElementById('calendarWrapper');
   let startX = 0;
   let endX = 0;
@@ -732,12 +733,10 @@
   }, {passive: true});
 
   function handleSwipe() {
-    const swipeThreshold = 50; // 이 픽셀 이상 밀어야 화면이 넘어감
+    const swipeThreshold = 50; 
     if (startX - endX > swipeThreshold) {
-      // 왼쪽으로 스와이프 (다음 달)
       changeMonth(1);
     } else if (endX - startX > swipeThreshold) {
-      // 오른쪽으로 스와이프 (이전 달)
       changeMonth(-1);
     }
   }
