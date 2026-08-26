@@ -34,7 +34,7 @@
     background: var(--bg-color);
   }
 
-  /* 상단 헤더 (이미지 로고로 변경) */
+  /* 상단 헤더 (이미지 로고) */
   .header {
     background-color: var(--card-bg);
     padding: 15px 15px;
@@ -46,12 +46,12 @@
     align-items: center;
   }
   .header img {
-    height: 45px; /* 로고가 자연스럽게 보이도록 높이 지정 */
+    height: 45px; 
     width: auto;
     object-fit: contain;
   }
 
-  /* 월별 필터 (가로 스크롤) */
+  /* 월별 필터 */
   .month-filters {
     display: flex;
     overflow-x: auto;
@@ -59,11 +59,11 @@
     padding: 15px;
     background: var(--card-bg);
     white-space: nowrap;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .month-filters::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+    display: none;
   }
   .filter-btn {
     padding: 8px 16px;
@@ -132,7 +132,6 @@
   }
   .cal-cell.empty { background: transparent; border: none; }
   
-  /* 오늘 날짜 (TODAY) 스타일 */
   .cal-cell.today {
     background: #fff5f5; 
     border: 1.5px solid var(--today-color); 
@@ -148,7 +147,6 @@
     align-items: center;
   }
   
-  /* TODAY 뱃지 스타일 */
   .today-badge {
     background-color: var(--today-color);
     color: #ffffff;
@@ -160,7 +158,6 @@
     line-height: 1;
   }
   
-  /* 달력 내 일정 미리보기 칩 */
   .cal-event-chip {
     font-size: 0.65rem;
     padding: 3px 4px;
@@ -189,7 +186,6 @@
     gap: 12px;
   }
 
-  /* 개별 일정 카드 (리스트 버튼) */
   .event-card {
     background: var(--card-bg);
     border-radius: 12px;
@@ -209,31 +205,27 @@
     text-align: left;
   }
 
-  /* 일시와 장소를 왼쪽으로 나란히 배치하도록 수정 */
   .event-meta {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 6px; /* 일시, 슬래시, 장소 사이의 간격 */
+    gap: 6px; 
     width: 100%;
     margin-bottom: 8px;
   }
 
-  /* 일시: 더 크게, 색상은 블랙으로 변경 */
   .event-date {
     font-size: 1.05rem;
     font-weight: 800;
     color: #000000;
   }
   
-  /* 슬래시 구분자 추가 */
   .event-divider {
     font-size: 1rem;
     color: #cbd5e0;
     font-weight: 700;
   }
 
-  /* 장소: 왼쪽 정렬로 변경 */
   .event-location {
     font-size: 0.95rem;
     color: var(--text-muted);
@@ -241,7 +233,6 @@
     text-align: left;
   }
 
-  /* 행사명: 약간 작게 조정 */
   .event-title {
     font-size: 1.15rem; 
     font-weight: 600;
@@ -251,7 +242,6 @@
     margin-top: 4px;
   }
   
-  /* 회장님 참석 행사명 */
   .event-title.chairman {
     color: var(--primary-color);
     font-weight: 800;
@@ -331,6 +321,13 @@
     word-break: keep-all;
   }
 
+  .loading-msg {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
   .no-data {
     text-align: center;
     padding: 40px;
@@ -343,7 +340,7 @@
 
 <div class="app-container">
   <div class="header">
-    <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
+    <img src="스크린샷 2026-08-25 162451.png" alt="KODA 로고">
   </div>
 
   <!-- 상단 월별 필터 -->
@@ -365,7 +362,7 @@
 
   <!-- 일정 리스트 영역 -->
   <div class="schedule-container" id="scheduleContainer">
-    <!-- 리스트 렌더링 영역 -->
+    <div class="loading-msg">실시간 일정을 불러오는 중입니다...⏳</div>
   </div>
 </div>
 
@@ -402,36 +399,11 @@
 </div>
 
 <script>
-  // 구글 시트 원본 텍스트 데이터 연동
-  const scheduleData = [
-    { month: 8, day: 25, date: "08.25(화) 14:00~", location: "국토교통위원장실", title: "국회 유의동 국토교통위원장 간담회", attendees: "ㅡ", content: "개발업법, 건분법 제도개선 요청", host: "ㅡ", note: "회장님 참석" },
-    { month: 8, day: 28, date: "08.28(금) 10:00~", location: "정부서울청사 대회의실", title: "금융‧건설업계 간담회 킥오프회의", attendees: "금융위 부위원장, 국토부 1차관, 금융관련 기관장 등", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 8, day: 31, date: "08.31(월) 10:00~", location: "국회도서관 대강당", title: "AI시대의 데이터센터 건설산업 육성과 공급전략 국회 세미나", attendees: "박덕흠 국회부의장, 유의동 국토위원장 등", content: "ㅡ", host: "국회", note: "회장님 참석" },
-    { month: 9, day: 1, date: "09.01(화) 16:00~", location: "HUG 본사(부산)", title: "HUG 최인호 사장 간담회", attendees: "김한모 회장, 김대건 수석부회장, 문길주 정책위원장, 이낙승 대외협력위원장, 정주영 미래인회장, 채창호 대성문대표", content: "최인호 사장 감사패 전달 등", host: "ㅡ", note: "회장님 참석" },
-    { month: 9, day: 2, date: "09.02(수) 11:00~", location: "명선헌", title: "한국부동산경제단체연합회 단체장 간담회", attendees: "ㅡ", content: "제11회 부동산산업의 날 행사 개최 알림", host: "한국공인중개사협회", note: "회장님 참석" },
-    { month: 9, day: 3, date: "09.03(목)", location: "KODA", title: "KODA-KB증권 MOU 협약식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 9, day: 8, date: "09.08(화) 08:30~", location: "장충 아레나", title: "제27회 세계지식포럼", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 9, day: 8, date: "09.08(화) 14:00~", location: "KODA", title: "도심 주거안정과 상생을 위한 전략 토론회", attendees: "ㅡ", content: "ㅡ", host: "KODA / 교육위원회", note: "ㅡ" },
-    { month: 9, day: 8, date: "09.08(화) 17:00~", location: "KODA", title: "Spatial AI Connect 부동산개발 AI 서비스기업 설명회", attendees: "ㅡ", content: "ㅡ", host: "KODA / 건설위원회", note: "ㅡ" },
-    { month: 9, day: 9, date: "09.09(수) 14:00~", location: "세종대 광개토관", title: "한국공인중개사협회 창립 40주년 기념식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 9, day: 10, date: "09.10(목) 17:00~", location: "라움 레벤홀", title: "ARPY 6기 입학식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "ㅡ" },
-    { month: 9, day: 11, date: "09.11(금) 11:00~", location: "KODA", title: "KODA-해외건설협회 MOU 협약식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 9, day: 11, date: "09.11(금) 13:00~", location: "국회의원회관 대회의실", title: "세계언론협회(WPA) 대한민국 보건복지 정책포럼 및 시상식", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 9, day: 14, date: "09.14(월) 14:00~", location: "KODA", title: "9월 운영위원회 회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 9, day: 15, date: "09.15(화) 13:00~", location: "금융감독원", title: "全금융권 PF사업장 합동 매각설명회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "ㅡ" },
-    { month: 9, day: 18, date: "09.18(금) 14:00~", location: "KODA", title: "제1차 미래도시주택포럼 총회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 9, day: 30, date: "09.30(수)~10.01(목)", location: "코엑스D홀", title: "집코노미 박람회", attendees: "ㅡ", content: "ㅡ", host: "ㅡ", note: "회장님 참석" },
-    { month: 10, day: 12, date: "10.12(월) 14:00~", location: "KODA", title: "10월 전체 임원회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 10, day: 13, date: "10.13(화) 14:30~", location: "KODA", title: "‘건설에서 조립으로, OSC 건설의 가능성’ 세미나", attendees: "ㅡ", content: "ㅡ", host: "KODA / 교육위원회", note: "ㅡ" },
-    { month: 10, day: 26, date: "10.26(월) 11:00~", location: "리베라C.C", title: "협회장배 KODA-ARP 골프대회", attendees: "협회 임원, ARP 총동문회, 회원사 대표 등 160인", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 10, day: 30, date: "10.30(금)~10.31(토)", location: "광주MBC", title: "Deep in Cities-Gwangju 국제컨퍼런스", attendees: "ㅡ", content: "ㅡ", host: "KODA호남지회", note: "ㅡ" },
-    { month: 11, day: 9, date: "11.09(월) 14:00~", location: "KODA", title: "11월 운영위원회 회의", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 11, day: 11, date: "11.11(수) 10:00~", location: "건설회관", title: "제11회 부동산산업의 날 개최", attendees: "ㅡ", content: "ㅡ", host: "한국부동산경제단체연합회", note: "회장님 참석" },
-    { month: 12, day: 7, date: "12.07(월) 17:00~", location: "라움", title: "ARP 12기 수료식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" },
-    { month: 12, day: 7, date: "12.07(월) 17:00~", location: "미정", title: "ARP 총동문회 송년회", attendees: "ㅡ", content: "ㅡ", host: "KODA-ARP", note: "회장님 참석" },
-    { month: 12, day: 10, date: "12.10(목) 18:00~", location: "라움", title: "ARPY 6기 수료식", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "ㅡ" },
-    { month: 12, day: 14, date: "12.14(월) 16:00~", location: "KODA", title: "KODA 임원 전체회의 및 송년의 밤", attendees: "ㅡ", content: "ㅡ", host: "KODA", note: "회장님 참석" }
-  ];
+  // 구글 시트 실시간 연동 주소
+  const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEbM8YAc7jQes9oX6_-aVsVib2H40avHQkL6TkRRI2cYmw7nYG29F_1lGGz-2gL0nve4Q91MBM02Q-/pub?output=csv";
+  
+  // 데이터 배열
+  let scheduleData = [];
 
   // 필터 버튼 생성
   const filterContainer = document.getElementById('filterContainer');
@@ -453,6 +425,86 @@
 
   let calYear = currentYear;
   let calMonth = currentMonth; 
+
+  // CSV 데이터를 객체로 변환하는 파서 함수
+  function parseCSV(csv) {
+    const rows = [];
+    let row = [], curr = '';
+    let insideQuote = false;
+    
+    for (let i = 0; i < csv.length; i++) {
+      const char = csv[i];
+      const nextChar = csv[i + 1];
+      
+      if (char === '"' && insideQuote && nextChar === '"') {
+        curr += '"';
+        i++; // 쌍따옴표 이스케이프 무시
+      } else if (char === '"') {
+        insideQuote = !insideQuote;
+      } else if (char === ',' && !insideQuote) {
+        row.push(curr);
+        curr = '';
+      } else if ((char === '\n' || char === '\r') && !insideQuote) {
+        if (char === '\r' && nextChar === '\n') i++; 
+        row.push(curr);
+        rows.push(row);
+        row = [];
+        curr = '';
+      } else {
+        curr += char;
+      }
+    }
+    if (curr || row.length > 0) {
+      row.push(curr);
+      rows.push(row);
+    }
+
+    const dataArr = [];
+    // 첫 번째 줄(헤더) 건너뛰기
+    for(let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (r.length < 3 || !r[0]) continue; // 빈 행 무시
+      
+      const dateStr = r[0].trim();
+      let m = 1, d = 1;
+      // "08.25" 형식에서 월/일 추출
+      const match = dateStr.match(/(\d{1,2})\.(\d{1,2})/);
+      if (match) {
+        m = parseInt(match[1], 10);
+        d = parseInt(match[2], 10);
+      }
+
+      dataArr.push({
+        month: m,
+        day: d,
+        date: dateStr,
+        location: r[1] ? r[1].trim() : "ㅡ",
+        title: r[2] ? r[2].trim() : "ㅡ",
+        attendees: r[3] ? r[3].trim() : "ㅡ",
+        content: r[4] ? r[4].trim() : "ㅡ",
+        host: r[5] ? r[5].trim() : "ㅡ",
+        note: r[6] ? r[6].trim() : "ㅡ"
+      });
+    }
+    return dataArr;
+  }
+
+  // 실시간 구글 시트 호출 함수
+  async function loadData() {
+    try {
+      const response = await fetch(GOOGLE_SHEET_CSV_URL);
+      const csvText = await response.text();
+      
+      scheduleData = parseCSV(csvText);
+      
+      // 불러온 후 화면 그리기
+      renderCalendar();
+      renderSchedules('all');
+    } catch (error) {
+      console.error("데이터 연동 실패:", error);
+      scheduleContainer.innerHTML = `<div class="no-data">일정을 불러오지 못했습니다. 네트워크 상태를 확인해주세요.</div>`;
+    }
+  }
 
   function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
@@ -529,7 +581,6 @@
       const card = document.createElement('div');
       card.className = 'event-card';
 
-      // 일시와 장소를 슬래시와 함께 나란히 렌더링
       card.innerHTML = `
         <button class="event-header" onclick="openModal(${globalIndex})">
           <div class="event-meta">
@@ -543,15 +594,11 @@
       scheduleContainer.appendChild(card);
     });
   }
-
-  // --- 모달 팝업 및 모바일 뒤로가기 연동 (History API) ---
   
-  // 브라우저 혹은 모바일 뒤로가기 감지 시 모달 숨김 처리
   window.addEventListener('popstate', function(event) {
     hideModalDOM();
   });
 
-  // 모달 화면 노출 및 History 스택 쌓기
   window.openModal = function(globalIndex) {
     const event = scheduleData[globalIndex];
     const isChairman = event.note.includes("회장님 참석");
@@ -570,22 +617,18 @@
     document.getElementById('eventModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
-    // 히스토리 스택 추가 (뒤로가기 시 이 상태가 pop 됩니다)
     history.pushState({ modalOpen: true }, "", "");
   };
 
-  // 모달 DOM 닫기 처리
   function hideModalDOM() {
     document.getElementById('eventModal').style.display = 'none';
     document.body.style.overflow = 'auto';
   }
 
-  // X 버튼 클릭 시 수동으로 뒤로가기 실행 (popstate 이벤트 유발)
   window.closeModalAction = function() {
     history.back(); 
   };
 
-  // 모달 외부 영역(배경) 클릭 시 닫기
   window.closeModalOnOutsideClick = function(e) {
     if(e.target.id === 'eventModal') {
       history.back();
@@ -611,8 +654,8 @@
     });
   });
 
-  renderCalendar();
-  renderSchedules('all');
+  // 앱 시작 시 데이터 로드 실행
+  loadData();
 
 </script>
 </body>
