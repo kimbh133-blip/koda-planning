@@ -209,10 +209,12 @@
     text-align: left;
   }
 
+  /* 일시와 장소를 왼쪽으로 나란히 배치하도록 수정 */
   .event-meta {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+    gap: 6px; /* 일시, 슬래시, 장소 사이의 간격 */
     width: 100%;
     margin-bottom: 8px;
   }
@@ -224,12 +226,19 @@
     color: #000000;
   }
   
-  /* 장소: 더 크게 변경 */
+  /* 슬래시 구분자 추가 */
+  .event-divider {
+    font-size: 1rem;
+    color: #cbd5e0;
+    font-weight: 700;
+  }
+
+  /* 장소: 왼쪽 정렬로 변경 */
   .event-location {
     font-size: 0.95rem;
     color: var(--text-muted);
     font-weight: 600;
-    text-align: right;
+    text-align: left;
   }
 
   /* 행사명: 약간 작게 조정 */
@@ -334,7 +343,6 @@
 
 <div class="app-container">
   <div class="header">
-    <!-- 텍스트 타이틀 대신 요청하신 로고 이미지를 삽입했습니다 -->
     <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
   </div>
 
@@ -521,10 +529,12 @@
       const card = document.createElement('div');
       card.className = 'event-card';
 
+      // 일시와 장소를 슬래시와 함께 나란히 렌더링
       card.innerHTML = `
         <button class="event-header" onclick="openModal(${globalIndex})">
           <div class="event-meta">
             <div class="event-date">${event.date}</div>
+            <div class="event-divider">/</div>
             <div class="event-location">${event.location}</div>
           </div>
           <div class="${titleClass}">${event.title}</div>
