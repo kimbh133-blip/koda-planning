@@ -51,7 +51,7 @@
     background: var(--bg-color);
   }
 
-  /* 헤더 영역 및 우측 상단 버튼 그룹, 왼쪽 새로고침 버튼 */
+  /* 헤더 영역 (왼쪽 새로고침, 가운데 로고, 오른쪽 앱설치 버튼) */
   .header {
     background-color: var(--card-bg);
     padding: 15px 15px;
@@ -84,30 +84,55 @@
     color: #718096;
   }
 
-  /* 우측 상단 버튼들을 나란히 배치하기 위한 영역 */
-  .header-right-btns {
+  .install-btn {
     position: absolute;
     right: 15px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-
-  /* 협회소식 및 앱 설치 버튼 공통 스타일 (작고 옅은 회색) */
-  .header-btn {
     background-color: transparent;
-    color: #718096;
-    border: 1px solid #cbd5e0;
+    color: #a0aec0;
+    border: 1px solid #e2e8f0;
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
   }
-  .header-btn:hover {
+
+  /* 1행 4열 바로가기 버튼 영역 (달력과 월별 버튼 사이 배치) */
+  .quick-menu-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 15px 15px 0 15px;
+  }
+  .quick-btn {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    word-break: keep-all;
+    line-height: 1.2;
+    transition: all 0.2s;
+  }
+  .quick-btn:hover {
     background-color: #f7fafc;
+    border-color: #cbd5e0;
+  }
+  .quick-btn.empty-slot {
+    color: #cbd5e0;
+    border-style: dashed;
+    cursor: default;
+  }
+  .quick-btn.empty-slot:hover {
+    background-color: #ffffff;
   }
 
   /* 월별 필터 영역 */
@@ -115,7 +140,7 @@
     display: flex;
     gap: 4px;
     padding: 0 15px;
-    margin-top: 15px;
+    margin-top: 12px;
     background: transparent;
     overflow-x: visible;
   }
@@ -387,30 +412,6 @@
     word-break: keep-all;
   }
 
-  .modal-img-container {
-    margin-top: 15px;
-    text-align: center;
-    border-top: 1px solid var(--border-color);
-    padding-top: 15px;
-  }
-  .modal-img-container img {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 1px solid var(--border-color);
-    object-fit: contain;
-    transition: transform 0.2s;
-  }
-  .modal-img-container img:hover {
-    transform: scale(1.02);
-  }
-  .img-hint {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
   .loading-msg {
     text-align: center;
     padding: 40px;
@@ -432,14 +433,18 @@
   <div class="header">
     <button class="refresh-btn" onclick="manualRefresh()">일정 새로고침</button>
     <img src="스크린샷 2026-08-12 140547.png" alt="KODA 로고">
-    
-    <!-- 우측 상단 버튼 그룹: 협회소식 링크 버튼 + 앱으로 설치 버튼 -->
-    <div class="header-right-btns">
-      <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="header-btn">협회소식</a>
-      <button id="installBtn" class="header-btn" style="display: none;">앱설치</button>
-    </div>
+    <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
+  <!-- 1행 4열 바로가기 버튼 영역 -->
+  <div class="quick-menu-container">
+    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
+    <div class="quick-btn empty-slot">준비중</div>
+    <div class="quick-btn empty-slot">준비중</div>
+    <div class="quick-btn empty-slot">준비중</div>
+  </div>
+
+  <!-- 상단 월별 필터 버튼 영역 -->
   <div class="month-filters" id="filterContainer">
     <button class="filter-btn active" data-month="all">26년</button>
   </div>
@@ -487,7 +492,6 @@
       <span class="modal-label">비고</span>
       <span class="modal-value" id="modalNote"></span>
     </div>
-    <div id="modalImgWrapper"></div>
   </div>
 </div>
 
@@ -585,8 +589,7 @@
         attendees: r[3] ? r[3].trim() : "ㅡ",
         content: r[4] ? r[4].trim() : "ㅡ",
         host: r[5] ? r[5].trim() : "ㅡ",
-        note: r[6] ? r[6].trim() : "ㅡ",
-        image: r[7] ? r[7].trim() : "" 
+        note: r[6] ? r[6].trim() : "ㅡ" 
       });
     }
     return dataArr;
@@ -752,18 +755,6 @@
     document.getElementById('modalContent').innerText = event.content;
     document.getElementById('modalHost').innerText = event.host;
     document.getElementById('modalNote').innerText = event.note;
-
-    const imgWrapper = document.getElementById('modalImgWrapper');
-    if (event.image && event.image.startsWith('http')) {
-      imgWrapper.innerHTML = `
-        <div class="modal-img-container">
-          <img src="${event.image}" alt="관련 사진" onclick="window.open('${event.image}', '_blank')" title="클릭하면 원본 크기로 커집니다">
-          <div class="img-hint">🔍 이미지를 누르면 크게 볼 수 있습니다</div>
-        </div>
-      `;
-    } else {
-      imgWrapper.innerHTML = '';
-    }
 
     document.getElementById('eventModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
