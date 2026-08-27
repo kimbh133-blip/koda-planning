@@ -299,7 +299,7 @@
   .event-header {
     display: flex;
     flex-direction: column;
-    padding: 12px 65px 12px 15px; /* 버튼 2개 공간 확보를 위해 우측 패딩 증가 */
+    padding: 12px 65px 12px 15px; 
     cursor: pointer;
     background: transparent;
     border: none;
@@ -315,7 +315,7 @@
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
-    color: #cbd5e0; /* 기본 회색 */
+    color: #cbd5e0; /* 옅은 회색 적용 */
     padding: 5px;
     z-index: 5;
     display: flex;
@@ -323,12 +323,11 @@
     justify-content: center;
   }
 
-  /* 내보내기 버튼 (별표 왼쪽) */
+  /* 내보내기 버튼 (별표 왼쪽 두 칸 정도 띄움) */
   .share-btn {
-    right: 40px; /* 별표(right:12px) 왼쪽에 위치 */
+    right: 40px; 
   }
   
-  /* 내보내기 버튼 활성화 (클릭 시 효과) */
   .share-btn:active {
       color: #718096;
   }
@@ -338,7 +337,6 @@
     right: 12px;
   }
   
-  /* 별표가 선택되었을 때의 색상 (황금색) */
   .star-btn.starred {
     color: #d69e2e;
   }
@@ -365,18 +363,12 @@
     font-weight: 700;
   }
 
+  /* 장소명과 D-day가 함께 표시되는 영역 */
   .event-location {
     font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 600;
     text-align: left;
-  }
-  
-  /* D-day 스타일 */
-  .event-dday {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--primary-color);
   }
 
   .event-title {
@@ -584,7 +576,6 @@
   let searchQuery = '';
 
   const todayDateObj = new Date();
-  // 시간을 0시 0분 0초로 맞춰 날짜 비교를 정확하게 함
   todayDateObj.setHours(0, 0, 0, 0); 
   
   const currentYear = todayDateObj.getFullYear();
@@ -653,11 +644,9 @@
       if (match) {
         m = parseInt(match[1], 10);
         d = parseInt(match[2], 10);
-        // 올해 연도 기준으로 일정 날짜 객체 생성
         eventDateObj = new Date(currentYear, m - 1, d);
       }
 
-      // D-day 계산 로직
       let ddayStr = "";
       if(match) {
           const diffTime = eventDateObj.getTime() - todayDateObj.getTime();
@@ -685,7 +674,7 @@
         content: r[4] ? r[4].trim() : "ㅡ",
         host: r[5] ? r[5].trim() : "ㅡ",
         note: r[6] ? r[6].trim() : "ㅡ",
-        dday: ddayStr // 계산된 D-day 값 추가
+        dday: ddayStr 
       });
     }
     return dataArr;
@@ -702,16 +691,14 @@
     updateView();
   }
   
-  // 내보내기(공유) 기능 추가
   window.shareEvent = function(event, globalIndex) {
-      event.stopPropagation(); // 카드 클릭(모달 열기) 방지
+      event.stopPropagation(); 
       
       const schedule = scheduleData[globalIndex];
       const shareTitle = `[KODA 일정] ${schedule.title}`;
       const shareText = `📅 일시: ${schedule.date}\n📍 장소: ${schedule.location}\n\n자세한 일정은 앱을 통해 확인하세요!`;
-      const shareUrl = window.location.href; // 현재 페이지 URL 공유
+      const shareUrl = window.location.href; 
 
-      // Web Share API가 지원되는지 확인 (대부분의 모바일 브라우저에서 지원)
       if (navigator.share) {
           navigator.share({
               title: shareTitle,
@@ -721,7 +708,6 @@
           .then(() => console.log('공유 성공'))
           .catch((error) => console.log('공유 실패', error));
       } else {
-          // Web Share API가 지원되지 않는 PC 등에서는 클립보드에 복사하거나 알림창 표시
           alert("현재 브라우저에서는 공유 기능이 지원되지 않습니다.\n\n" + shareTitle + "\n" + shareText);
       }
   }
@@ -902,17 +888,21 @@
       const card = document.createElement('div');
       card.className = 'event-card';
 
-      // 내보내기 버튼 추가, D-day 추가
+      // 내보내기 버튼 심플한 SVG 아이콘으로 대체, 장소 오른쪽에 D-day 삽입
       card.innerHTML = `
-        <button class="icon-btn share-btn" onclick="shareEvent(event, ${globalIndex})">📤</button>
+        <button class="icon-btn share-btn" onclick="shareEvent(event, ${globalIndex})">
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+        </button>
         <button class="icon-btn star-btn ${isStarred ? 'starred' : ''}" onclick="toggleBookmark(event, '${event.id}')">${isStarred ? '★' : '☆'}</button>
         <button class="event-header" onclick="openModal(${globalIndex})">
           <div class="event-meta">
             <div class="event-date">${event.date}</div>
             <div class="event-divider">/</div>
-            <div class="event-location">${event.location}</div>
-            &nbsp;&nbsp;&nbsp; <!-- 스페이스 3개 띄움 -->
-            <div class="event-dday">${event.dday}</div>
+            <div class="event-location">${event.location}&nbsp;(${event.dday})</div>
           </div>
           <div class="${titleClass}">${event.title}</div>
         </button>
