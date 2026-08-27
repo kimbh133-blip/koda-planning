@@ -213,7 +213,7 @@
   /* 상단 메뉴바 */
   .quick-menu-container {
     display: grid;
-    grid-template-columns: 3.3fr 3.3fr 3.3fr 3.3fr 2.8fr;
+    grid-template-columns: 2.8fr 2.8fr 2.8fr 2.8fr 2.8fr 2.0fr;
     gap: 4px;
     padding: 0 10px 10px 10px;
     width: 100%;
@@ -246,6 +246,12 @@
     background-color: #d69e2e !important;
     color: #ffffff !important;
     border-color: #d69e2e !important;
+  }
+  .quick-btn.disabled {
+    color: #a0aec0;
+    background-color: #f7fafc;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   .search-box-wrapper {
@@ -341,7 +347,11 @@
       color: #718096;
   }
 
-  /* 별표 버튼 */
+  /* 별표 버튼 (공유 아이콘과 시각적 크기를 맞추기 위해 확대) */
+  .star-btn {
+    font-size: 1.55rem;
+    line-height: 1;
+  }
   .star-btn.starred {
     color: #d69e2e;
   }
@@ -522,9 +532,10 @@
 
   <div class="quick-menu-container">
     <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
-    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
+    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">언론보도 현황</a>
+    <button class="quick-btn disabled" disabled>준비중</button>
     <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
-    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">내가 찜한 일정</button>
+    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">관심 일정</button>
     
     <div class="search-box-wrapper">
       <span class="search-icon">🔍</span>
@@ -533,7 +544,7 @@
   </div>
 
   <div class="schedule-container" id="scheduleContainer">
-    <div class="loading-msg">실시간 일정을 불러오는 중입니다...⏳</div>
+    <div class="loading-msg">최신 일정을 불러오는 중입니다...⏳</div>
   </div>
 </div>
 
@@ -561,7 +572,7 @@
       <span class="modal-value" id="modalContent"></span>
     </div>
     <div class="modal-detail-row">
-      <span class="modal-label">주최 / 주관</span>
+      <span class="modal-label">주최/주관</span>
       <span class="modal-value" id="modalHost"></span>
     </div>
     <div class="modal-detail-row">
