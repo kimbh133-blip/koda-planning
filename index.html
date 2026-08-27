@@ -105,97 +105,6 @@
     cursor: pointer;
   }
 
-  /* 상단 메뉴바 (비율 3.65 x 4개 + 1.4 x 1개 = 총합 16 에 맞춘 그리드 배분) */
-  .quick-menu-container {
-    display: grid;
-    grid-template-columns: 3.65fr 3.65fr 3.65fr 3.65fr 1.4fr;
-    gap: 4px;
-    padding: 12px 10px 0 10px;
-    width: 100%;
-  }
-  .quick-btn {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 8px 1px;
-    font-size: 0.58rem; 
-    font-weight: 700;
-    color: var(--text-dark);
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    word-break: keep-all;
-    line-height: 1.15;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .quick-btn:hover {
-    background-color: #f7fafc;
-    border-color: #cbd5e0;
-  }
-  .quick-btn.active-bookmark {
-    background-color: #d69e2e !important;
-    color: #ffffff !important;
-    border-color: #d69e2e !important;
-  }
-
-  /* 5번째 검색 버튼(돋보기) 스타일 */
-  .search-trigger-btn {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 8px 1px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-align: center;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    transition: all 0.2s;
-  }
-  .search-trigger-btn:hover {
-    background-color: #f7fafc;
-    border-color: #cbd5e0;
-  }
-
-  /* 검색 입력 모달 영역 */
-  .search-bar-container {
-    display: none;
-    padding: 6px 10px 0 10px;
-    width: 100%;
-    animation: fadeIn 0.2s ease-out;
-  }
-  .search-box-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-  .search-input {
-    width: 100%;
-    padding: 8px 10px 8px 28px;
-    border: 1px solid var(--primary-color);
-    border-radius: 6px;
-    font-size: 0.75rem;
-    background-color: #ffffff;
-    color: var(--text-dark);
-    outline: none;
-    box-shadow: 0 2px 5px rgba(0,82,204,0.1);
-  }
-  .search-icon {
-    position: absolute;
-    left: 9px;
-    font-size: 0.75rem;
-    color: var(--primary-color);
-    pointer-events: none;
-  }
-
   /* 달력 영역 */
   .calendar-wrapper {
     background: var(--card-bg);
@@ -299,6 +208,75 @@
   .cal-event-chip.chairman {
     background-color: #d0e1fd; 
     color: #000000;
+  }
+
+  /* 상단 메뉴바 (달력 바로 아래 배치, 세로 1.3배 확대, 가로 비율 3.3 x 4개 + 2.8 x 1개) */
+  .quick-menu-container {
+    display: grid;
+    grid-template-columns: 3.3fr 3.3fr 3.3fr 3.3fr 2.8fr;
+    gap: 4px;
+    padding: 0 10px 10px 10px;
+    width: 100%;
+    align-items: stretch;
+  }
+  .quick-btn {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 11px 1px; /* 세로 사이즈 기존 대비 1.3배 확대 */
+    font-size: 0.58rem; 
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    word-break: keep-all;
+    line-height: 1.15;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .quick-btn:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+  }
+  .quick-btn.active-bookmark {
+    background-color: #d69e2e !important;
+    color: #ffffff !important;
+    border-color: #d69e2e !important;
+  }
+
+  /* 5번째 버튼: 돋보기 아이콘 + 조그마한 검색어 창 포함된 형태 */
+  .search-box-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  .search-input {
+    width: 100%;
+    height: 100%;
+    padding: 0 4px 0 22px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.58rem;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .search-input:focus {
+    border-color: var(--primary-color);
+  }
+  .search-icon {
+    position: absolute;
+    left: 6px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    pointer-events: none;
   }
 
   /* 일정 리스트 영역 */
@@ -509,23 +487,6 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
-  <!-- 1행 5열 바로가기 버튼 영역 (비율 3.65 x 4개 + 1.4 x 1개) -->
-  <div class="quick-menu-container">
-    <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
-    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
-    <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
-    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">내가 찜한 일정</button>
-    <button class="search-trigger-btn" onclick="toggleSearchBox()" title="일정 검색">🔍</button>
-  </div>
-
-  <!-- 돋보기 버튼을 누를 때 나타나는 검색창 바 -->
-  <div class="search-bar-container" id="searchBarContainer">
-    <div class="search-box-wrapper">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="일정 검색 (제목, 장소 등 입력)" oninput="handleSearchInput(event)">
-    </div>
-  </div>
-
   <div class="calendar-wrapper" id="calendarWrapper">
     <div class="cal-header">
       <button class="cal-nav-btn" onclick="changeMonth(-1)">&#10094;</button>
@@ -533,6 +494,20 @@
       <button class="cal-nav-btn" onclick="changeMonth(1)">&#10095;</button>
     </div>
     <div class="cal-grid" id="calendarGrid">
+    </div>
+  </div>
+
+  <!-- 1행 5열 바로가기 버튼 영역 (달력 바로 아래 배치, 비율 3.3 x 4개 + 2.8 x 1개) -->
+  <div class="quick-menu-container">
+    <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
+    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
+    <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
+    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">내가 찜한 일정</button>
+    
+    <!-- 5번째 버튼: 돋보기 아이콘과 검색어 입력창이 함께 있는 형태 -->
+    <div class="search-box-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="검색" oninput="handleSearchInput(event)">
     </div>
   </div>
 
@@ -668,17 +643,6 @@
       });
     }
     return dataArr;
-  }
-
-  // 검색창 토글 함수 (돋보기 버튼 클릭 시 열리고 닫힘)
-  window.toggleSearchBox = function() {
-    const sb = document.getElementById('searchBarContainer');
-    if (sb.style.display === 'block') {
-      sb.style.display = 'none';
-    } else {
-      sb.style.display = 'block';
-      document.getElementById('searchInput').focus();
-    }
   }
 
   window.toggleBookmark = function(event, id) {
