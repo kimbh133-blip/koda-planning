@@ -105,58 +105,94 @@
     cursor: pointer;
   }
 
-  /* 상단 기능 버튼 및 검색창 영역 */
-  .top-action-container {
-    display: flex;
-    gap: 6px;
+  /* 상단 메뉴바 (비율 3.65 x 4개 + 1.4 x 1개 = 총합 16 에 맞춘 그리드 배분) */
+  .quick-menu-container {
+    display: grid;
+    grid-template-columns: 3.65fr 3.65fr 3.65fr 3.65fr 1.4fr;
+    gap: 4px;
     padding: 12px 10px 0 10px;
     width: 100%;
   }
-  .action-btn {
-    flex: 1;
-    padding: 8px 4px;
-    border: 1px solid var(--border-color);
+  .quick-btn {
     background-color: #ffffff;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.72rem;
+    padding: 8px 1px;
+    font-size: 0.58rem; 
     font-weight: 700;
-    color: var(--text-muted);
+    color: var(--text-dark);
     text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    word-break: keep-all;
+    line-height: 1.15;
     transition: all 0.2s;
     white-space: nowrap;
   }
-  .action-btn.active-bookmark {
-    background-color: #d69e2e;
-    color: #ffffff;
-    border-color: #d69e2e;
+  .quick-btn:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+  }
+  .quick-btn.active-bookmark {
+    background-color: #d69e2e !important;
+    color: #ffffff !important;
+    border-color: #d69e2e !important;
   }
 
-  /* 검색창 스타일 */
+  /* 5번째 검색 버튼(돋보기) 스타일 */
+  .search-trigger-btn {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 1px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.2s;
+  }
+  .search-trigger-btn:hover {
+    background-color: #f7fafc;
+    border-color: #cbd5e0;
+  }
+
+  /* 검색 입력 모달 영역 */
+  .search-bar-container {
+    display: none;
+    padding: 6px 10px 0 10px;
+    width: 100%;
+    animation: fadeIn 0.2s ease-out;
+  }
   .search-box-wrapper {
-    flex: 1;
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
   }
   .search-input {
     width: 100%;
-    padding: 7px 8px 7px 26px;
-    border: 1px solid var(--border-color);
+    padding: 8px 10px 8px 28px;
+    border: 1px solid var(--primary-color);
     border-radius: 6px;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     background-color: #ffffff;
     color: var(--text-dark);
     outline: none;
-  }
-  .search-input:focus {
-    border-color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0,82,204,0.1);
   }
   .search-icon {
     position: absolute;
-    left: 8px;
-    font-size: 0.7rem;
-    color: var(--text-muted);
+    left: 9px;
+    font-size: 0.75rem;
+    color: var(--primary-color);
     pointer-events: none;
   }
 
@@ -265,37 +301,6 @@
     color: #000000;
   }
 
-  /* 1행 4열 바로가기 버튼 영역 */
-  .quick-menu-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    padding: 0 10px 10px 10px;
-    width: 100%;
-  }
-  .quick-btn {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 7px 1px;
-    font-size: 0.6rem; 
-    font-weight: 700;
-    color: var(--text-dark);
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    word-break: keep-all;
-    line-height: 1.15;
-    transition: all 0.2s;
-  }
-  .quick-btn:hover {
-    background-color: #f7fafc;
-    border-color: #cbd5e0;
-  }
-
   /* 일정 리스트 영역 */
   .schedule-container {
     padding: 0 10px 30px 10px;
@@ -317,7 +322,7 @@
   .event-header {
     display: flex;
     flex-direction: column;
-    padding: 12px 40px 12px 15px; /* 우측 별표 공간 확보 */
+    padding: 12px 40px 12px 15px; 
     cursor: pointer;
     background: transparent;
     border: none;
@@ -325,7 +330,6 @@
     text-align: left;
   }
 
-  /* 즐겨찾기 별표 버튼 스타일 */
   .star-btn {
     position: absolute;
     top: 12px;
@@ -505,12 +509,20 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
-  <!-- 상단 액션 버튼 영역 (내가 찜한 일정 확인 + 검색창) -->
-  <div class="top-action-container">
-    <button class="action-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">⭐ 내가 찜한 일정 확인</button>
+  <!-- 1행 5열 바로가기 버튼 영역 (비율 3.65 x 4개 + 1.4 x 1개) -->
+  <div class="quick-menu-container">
+    <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
+    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
+    <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
+    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">내가 찜한 일정</button>
+    <button class="search-trigger-btn" onclick="toggleSearchBox()" title="일정 검색">🔍</button>
+  </div>
+
+  <!-- 돋보기 버튼을 누를 때 나타나는 검색창 바 -->
+  <div class="search-bar-container" id="searchBarContainer">
     <div class="search-box-wrapper">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="일정 검색 (제목, 장소 등)" oninput="handleSearchInput(event)">
+      <input type="text" id="searchInput" class="search-input" placeholder="일정 검색 (제목, 장소 등 입력)" oninput="handleSearchInput(event)">
     </div>
   </div>
 
@@ -522,14 +534,6 @@
     </div>
     <div class="cal-grid" id="calendarGrid">
     </div>
-  </div>
-
-  <!-- 1행 4열 바로가기 버튼 영역 -->
-  <div class="quick-menu-container">
-    <a href="https://www.koda.or.kr/main/" target="_blank" class="quick-btn">KODA 홈페이지</a>
-    <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">협회 언론보도 현황</a>
-    <div class="quick-btn" style="color: #cbd5e0; border-style: dashed; cursor: default;">준비중</div>
-    <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
   </div>
 
   <div class="schedule-container" id="scheduleContainer">
@@ -648,7 +652,6 @@
         d = parseInt(match[2], 10);
       }
 
-      // 각 일정 고유 ID 부여 (날짜+제목 조합)
       const id = `${dateStr}_${r[2] ? r[2].trim() : ''}`;
 
       dataArr.push({
@@ -667,9 +670,19 @@
     return dataArr;
   }
 
-  // 즐겨찾기(별표) 토글 함수
+  // 검색창 토글 함수 (돋보기 버튼 클릭 시 열리고 닫힘)
+  window.toggleSearchBox = function() {
+    const sb = document.getElementById('searchBarContainer');
+    if (sb.style.display === 'block') {
+      sb.style.display = 'none';
+    } else {
+      sb.style.display = 'block';
+      document.getElementById('searchInput').focus();
+    }
+  }
+
   window.toggleBookmark = function(event, id) {
-    event.stopPropagation(); // 카드 클릭(모달 열기) 이벤트 방지
+    event.stopPropagation(); 
     if (bookmarks.includes(id)) {
       bookmarks = bookmarks.filter(item => item !== id);
     } else {
@@ -679,7 +692,6 @@
     updateView();
   }
 
-  // 모달 내부에서 즐겨찾기 토글
   let currentModalGlobalIndex = null;
   window.toggleBookmarkModal = function() {
     if (currentModalGlobalIndex === null) return;
@@ -691,7 +703,6 @@
     }
     localStorage.setItem('koda_bookmarks', JSON.stringify(bookmarks));
     
-    // 모달 별표 UI 갱신
     const modalStar = document.getElementById('modalStarBtn');
     if (bookmarks.includes(event.id)) {
       modalStar.classList.add('starred');
@@ -701,7 +712,6 @@
     updateView();
   }
 
-  // 찜한 일정만 보기 토글
   window.toggleBookmarksOnly = function() {
     showBookmarksOnly = !showBookmarksOnly;
     const btn = document.getElementById('bookmarkFilterBtn');
@@ -713,22 +723,18 @@
     updateView();
   }
 
-  // 검색어 입력 핸들러
   window.handleSearchInput = function(e) {
     searchQuery = e.target.value.trim().toLowerCase();
     updateView();
   }
 
-  // 데이터 필터링 종합 로직
   function getFilteredData() {
     let data = scheduleData;
 
-    // 1. 찜한 일정만 보기 필터
     if (showBookmarksOnly) {
       data = data.filter(event => bookmarks.includes(event.id));
     }
 
-    // 2. 검색어 필터
     if (searchQuery !== '') {
       data = data.filter(event => 
         event.title.toLowerCase().includes(searchQuery) ||
@@ -739,7 +745,6 @@
       );
     }
 
-    // 3. 월별 필터 (검색어나 찜한 일정을 보지 않을 때는 현재 선택된 달력 월 기준)
     if (!showBookmarksOnly && searchQuery === '') {
       data = data.filter(event => event.month == calMonth);
     }
@@ -796,7 +801,6 @@
     }
 
     for(let d = 1; d <= lastDay; d++) {
-      // 달력에 표시될 때는 기본적으로 해당 월의 일정들을 대상으로 함 (검색어 무관하게 달력 날짜별 표시)
       let monthBaseData = scheduleData.filter(e => e.month === calMonth && e.day === d);
       if (showBookmarksOnly) {
         monthBaseData = monthBaseData.filter(e => bookmarks.includes(e.id));
