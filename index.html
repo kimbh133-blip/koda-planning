@@ -305,7 +305,7 @@
   .event-header {
     display: flex;
     flex-direction: column;
-    padding: 12px 62px 12px 15px; 
+    padding: 12px 70px 12px 15px; 
     cursor: pointer;
     background: transparent;
     border: none;
@@ -324,34 +324,30 @@
     gap: 2px;
   }
 
-  /* 공통 아이콘 버튼 스타일 */
+  /* 공통 아이콘 버튼 스타일 (모든 아이콘을 동일한 정사각 박스에 중앙 정렬해 라인을 맞춤) */
   .icon-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
     cursor: pointer;
     color: #cbd5e0; /* 옅은 회색 적용 */
-    padding: 5px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-
-  /* 공유 버튼 (네이버 뉴스 스타일 공유 아이콘) */
-  .share-btn svg {
-    width: 1.05em;
-    height: 1.05em;
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
   }
 
   .share-btn:active {
       color: #718096;
   }
 
-  /* 별표 버튼 (공유 아이콘과 시각적 크기를 맞추기 위해 확대) */
-  .star-btn {
-    font-size: 1.55rem;
-    line-height: 1;
-  }
   .star-btn.starred {
     color: #d69e2e;
   }
@@ -535,7 +531,7 @@
     <a href="https://search.naver.com/search.naver?ssc=tab.news.all&where=news&sm=tab_jum&query=%EB%94%94%EB%B2%A8%EB%A1%9C%ED%8D%BC%ED%98%91%ED%9A%8C" target="_blank" class="quick-btn">언론보도 현황</a>
     <button class="quick-btn disabled" disabled>준비중</button>
     <a href="https://www.youtube.com/@kodatv9717" target="_blank" class="quick-btn">KODA-TV</a>
-    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">관심 일정</button>
+    <button class="quick-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">MY 관심 일정</button>
     
     <div class="search-box-wrapper">
       <span class="search-icon">🔍</span>
@@ -912,7 +908,12 @@
               <path d="M18,16.08c-0.76,0-1.44,0.3-1.96,0.77L8.91,12.7C8.96,12.47,9,12.24,9,12s-0.04-0.47-0.09-0.7l7.05-4.11 c0.54,0.5,1.25,0.81,2.04,0.81c1.66,0,3-1.34,3-3c0-1.66-1.34-3-3-3s-3,1.34-3,3c0,0.24,0.04,0.47,0.09,0.7L8.04,9.81 C7.5,9.31,6.79,9,6,9c-1.66,0-3,1.34-3,3s1.34,3,3,3c0.79,0,1.5-0.31,2.04-0.81l7.12,4.15c-0.05,0.21-0.08,0.43-0.08,0.66 c0,1.61,1.31,2.92,2.92,2.92c1.61,0,2.92-1.31,2.92-2.92C20.92,17.39,19.61,16.08,18,16.08z"></path>
             </svg>
           </button>
-          <button class="icon-btn star-btn ${isStarred ? 'starred' : ''}" onclick="toggleBookmark(event, '${event.id}')">${isStarred ? '★' : '☆'}</button>
+          <button class="icon-btn star-btn ${isStarred ? 'starred' : ''}" onclick="toggleBookmark(event, '${event.id}')">
+            ${isStarred
+              ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>'
+            }
+          </button>
         </div>
         <button class="event-header" onclick="openModal(${globalIndex})">
           <div class="event-meta">
