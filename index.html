@@ -105,74 +105,59 @@
     cursor: pointer;
   }
 
-  /* 월별 필터 영역 */
-  .month-filters {
-    display: flex;
-    gap: 3px;
-    padding: 0 10px;
-    margin-top: 10px;
-    background: transparent;
-    width: 100%;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .month-filters::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .filter-btn {
-    flex: 1; 
-    min-width: 26px;
-    padding: 5px 0;
-    border: 1px solid var(--border-color);
-    background-color: #ffffff;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .filter-btn.active {
-    background-color: var(--text-dark);
-    color: #ffffff;
-    border-color: var(--text-dark);
-  }
-
-  /* 조건별 토글 버튼 영역 (월별 버튼과 달력 사이) */
-  .category-filter-container {
+  /* 상단 기능 버튼 및 검색창 영역 */
+  .top-action-container {
     display: flex;
     gap: 6px;
-    padding: 0 10px;
-    margin-top: 8px;
+    padding: 12px 10px 0 10px;
     width: 100%;
   }
-  .cat-filter-btn {
+  .action-btn {
     flex: 1;
-    padding: 6px 4px;
+    padding: 8px 4px;
     border: 1px solid var(--border-color);
     background-color: #ffffff;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--text-muted);
     text-align: center;
     transition: all 0.2s;
     white-space: nowrap;
   }
-  .cat-filter-btn.active-chairman {
-    background-color: #0052cc;
+  .action-btn.active-bookmark {
+    background-color: #d69e2e;
     color: #ffffff;
-    border-color: #0052cc;
+    border-color: #d69e2e;
   }
-  .cat-filter-btn.active-edu {
-    background-color: #319795;
-    color: #ffffff;
-    border-color: #319795;
+
+  /* 검색창 스타일 */
+  .search-box-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-input {
+    width: 100%;
+    padding: 7px 8px 7px 26px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.72rem;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    outline: none;
+  }
+  .search-input:focus {
+    border-color: var(--primary-color);
+  }
+  .search-icon {
+    position: absolute;
+    left: 8px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    pointer-events: none;
   }
 
   /* 달력 영역 */
@@ -326,17 +311,35 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.03);
     border: 1px solid rgba(0,0,0,0.04);
     overflow: hidden;
+    position: relative;
   }
 
   .event-header {
     display: flex;
     flex-direction: column;
-    padding: 12px 15px;
+    padding: 12px 40px 12px 15px; /* 우측 별표 공간 확보 */
     cursor: pointer;
     background: transparent;
     border: none;
     width: 100%;
     text-align: left;
+  }
+
+  /* 즐겨찾기 별표 버튼 스타일 */
+  .star-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #cbd5e0;
+    padding: 5px;
+    z-index: 5;
+  }
+  .star-btn.starred {
+    color: #d69e2e;
   }
 
   .event-meta {
@@ -428,17 +431,36 @@
     z-index: 10;
   }
   
+  .modal-title-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    padding-right: 25px;
+  }
+
   .modal-title {
     font-size: 1.1rem;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 10px;
     line-height: 1.35;
-    padding-right: 25px;
     word-break: keep-all;
   }
   .modal-title.chairman {
     color: var(--primary-color);
+  }
+
+  .modal-star {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #cbd5e0;
+    margin-left: 10px;
+    flex-shrink: 0;
+  }
+  .modal-star.starred {
+    color: #d69e2e;
   }
 
   .modal-detail-row {
@@ -483,15 +505,13 @@
     <button id="installBtn" class="install-btn" style="display: none;">앱설치</button>
   </div>
 
-  <!-- 상단 월별 필터 버튼 영역 -->
-  <div class="month-filters" id="filterContainer">
-    <button class="filter-btn active" data-month="all">26년</button>
-  </div>
-
-  <!-- 조건별 보기 토글 버튼 영역 (월별 버튼과 달력 사이) -->
-  <div class="category-filter-container">
-    <button class="cat-filter-btn" id="filterChairman" onclick="toggleCategory('chairman')">회장님 참석일정만 보기</button>
-    <button class="cat-filter-btn" id="filterEdu" onclick="toggleCategory('edu')">교육·ARP일정만 보기</button>
+  <!-- 상단 액션 버튼 영역 (내가 찜한 일정 확인 + 검색창) -->
+  <div class="top-action-container">
+    <button class="action-btn" id="bookmarkFilterBtn" onclick="toggleBookmarksOnly()">⭐ 내가 찜한 일정 확인</button>
+    <div class="search-box-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="일정 검색 (제목, 장소 등)" oninput="handleSearchInput(event)">
+    </div>
   </div>
 
   <div class="calendar-wrapper" id="calendarWrapper">
@@ -520,7 +540,10 @@
 <div class="modal-overlay" id="eventModal" onclick="closeModalOnOutsideClick(event)">
   <div class="modal-content">
     <button class="modal-close" onclick="closeModalAction()">×</button>
-    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-title-area">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-star" id="modalStarBtn" onclick="toggleBookmarkModal()">★</button>
+    </div>
     <div class="modal-detail-row">
       <span class="modal-label">일시</span>
       <span class="modal-value" id="modalDate"></span>
@@ -552,19 +575,10 @@
   const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEbM8YAc7jQes9oX6_-aVsVib2H40avHQkL6TkRRI2cYmw7nYG29F_1lGGz-2gL0nve4Q91MBM02Q-/pub?output=csv";
   
   let scheduleData = [];
-  let currentSelectedMonth = 'all'; 
-  let activeCategory = null; // null, 'chairman', 'edu'
-
-  const filterContainer = document.getElementById('filterContainer');
-  for(let i = 1; i <= 12; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.dataset.month = i;
-    btn.innerText = `${i}월`;
-    filterContainer.appendChild(btn);
-  }
-
-  const scheduleContainer = document.getElementById('scheduleContainer');
+  let bookmarks = JSON.parse(localStorage.getItem('koda_bookmarks') || '[]');
+  
+  let showBookmarksOnly = false;
+  let searchQuery = '';
 
   const todayDateObj = new Date();
   const currentYear = todayDateObj.getFullYear();
@@ -634,7 +648,11 @@
         d = parseInt(match[2], 10);
       }
 
+      // 각 일정 고유 ID 부여 (날짜+제목 조합)
+      const id = `${dateStr}_${r[2] ? r[2].trim() : ''}`;
+
       dataArr.push({
+        id: id,
         month: m,
         day: d,
         date: dateStr,
@@ -649,51 +667,81 @@
     return dataArr;
   }
 
-  // 조건별 필터 토글 함수
-  window.toggleCategory = function(category) {
-    if (activeCategory === category) {
-      activeCategory = null; // 이미 선택되어 있으면 해제
+  // 즐겨찾기(별표) 토글 함수
+  window.toggleBookmark = function(event, id) {
+    event.stopPropagation(); // 카드 클릭(모달 열기) 이벤트 방지
+    if (bookmarks.includes(id)) {
+      bookmarks = bookmarks.filter(item => item !== id);
     } else {
-      activeCategory = category;
+      bookmarks.push(id);
     }
-    updateCategoryButtonsUI();
+    localStorage.setItem('koda_bookmarks', JSON.stringify(bookmarks));
     updateView();
-  };
-
-  function updateCategoryButtonsUI() {
-    const btnChairman = document.getElementById('filterChairman');
-    const btnEdu = document.getElementById('filterEdu');
-    
-    btnChairman.className = "cat-filter-btn";
-    btnEdu.className = "cat-filter-btn";
-
-    if (activeCategory === 'chairman') {
-      btnChairman.classList.add('active-chairman');
-    } else if (activeCategory === 'edu') {
-      btnEdu.classList.add('active-edu');
-    }
   }
 
-  // 데이터 필터링 공통 로직
+  // 모달 내부에서 즐겨찾기 토글
+  let currentModalGlobalIndex = null;
+  window.toggleBookmarkModal = function() {
+    if (currentModalGlobalIndex === null) return;
+    const event = scheduleData[currentModalGlobalIndex];
+    if (bookmarks.includes(event.id)) {
+      bookmarks = bookmarks.filter(item => item !== event.id);
+    } else {
+      bookmarks.push(event.id);
+    }
+    localStorage.setItem('koda_bookmarks', JSON.stringify(bookmarks));
+    
+    // 모달 별표 UI 갱신
+    const modalStar = document.getElementById('modalStarBtn');
+    if (bookmarks.includes(event.id)) {
+      modalStar.classList.add('starred');
+    } else {
+      modalStar.classList.remove('starred');
+    }
+    updateView();
+  }
+
+  // 찜한 일정만 보기 토글
+  window.toggleBookmarksOnly = function() {
+    showBookmarksOnly = !showBookmarksOnly;
+    const btn = document.getElementById('bookmarkFilterBtn');
+    if (showBookmarksOnly) {
+      btn.classList.add('active-bookmark');
+    } else {
+      btn.classList.remove('active-bookmark');
+    }
+    updateView();
+  }
+
+  // 검색어 입력 핸들러
+  window.handleSearchInput = function(e) {
+    searchQuery = e.target.value.trim().toLowerCase();
+    updateView();
+  }
+
+  // 데이터 필터링 종합 로직
   function getFilteredData() {
     let data = scheduleData;
 
-    // 월별 필터 적용
-    if (currentSelectedMonth !== 'all') {
-      data = data.filter(event => event.month == currentSelectedMonth);
+    // 1. 찜한 일정만 보기 필터
+    if (showBookmarksOnly) {
+      data = data.filter(event => bookmarks.includes(event.id));
     }
 
-    // 카테고리 필터 적용
-    if (activeCategory === 'chairman') {
-      data = data.filter(event => event.note.includes("회장님 참석"));
-    } else if (activeCategory === 'edu') {
+    // 2. 검색어 필터
+    if (searchQuery !== '') {
       data = data.filter(event => 
-        event.title.includes("ARP") || 
-        event.title.includes("ARPY") || 
-        event.title.includes("교육") || 
-        event.host.includes("교육") ||
-        event.note.includes("교육")
+        event.title.toLowerCase().includes(searchQuery) ||
+        event.location.toLowerCase().includes(searchQuery) ||
+        event.date.toLowerCase().includes(searchQuery) ||
+        event.content.toLowerCase().includes(searchQuery) ||
+        event.host.toLowerCase().includes(searchQuery)
       );
+    }
+
+    // 3. 월별 필터 (검색어나 찜한 일정을 보지 않을 때는 현재 선택된 달력 월 기준)
+    if (!showBookmarksOnly && searchQuery === '') {
+      data = data.filter(event => event.month == calMonth);
     }
 
     return data;
@@ -748,12 +796,14 @@
     }
 
     for(let d = 1; d <= lastDay; d++) {
-      // 달력에 들어갈 때는 월별 + 카테고리 조건이 반영된 데이터를 사용
-      const activeFiltered = getFilteredData();
-      const dayEvents = activeFiltered.filter(e => e.month === calMonth && e.day === d);
-      
+      // 달력에 표시될 때는 기본적으로 해당 월의 일정들을 대상으로 함 (검색어 무관하게 달력 날짜별 표시)
+      let monthBaseData = scheduleData.filter(e => e.month === calMonth && e.day === d);
+      if (showBookmarksOnly) {
+        monthBaseData = monthBaseData.filter(e => bookmarks.includes(e.id));
+      }
+
       let eventsHtml = '';
-      dayEvents.forEach(e => {
+      monthBaseData.forEach(e => {
         const globalIndex = scheduleData.indexOf(e);
         const isChairman = e.note.includes("회장님 참석");
         
@@ -792,22 +842,8 @@
     if(calMonth > 12) { calMonth = 1; calYear++; }
     else if(calMonth < 1) { calMonth = 12; calYear--; }
 
-    currentSelectedMonth = calMonth;
-    syncFilterButtonsUI();
-
     updateView();
   };
-
-  function syncFilterButtonsUI() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(b => {
-      if (b.dataset.month == currentSelectedMonth) {
-        b.classList.add('active');
-      } else {
-        b.classList.remove('active');
-      }
-    });
-  }
 
   function renderSchedules() {
     scheduleContainer.innerHTML = '';
@@ -823,11 +859,13 @@
       const globalIndex = scheduleData.indexOf(event);
       const isChairman = event.note.includes("회장님 참석");
       const titleClass = isChairman ? "event-title chairman" : "event-title";
+      const isStarred = bookmarks.includes(event.id);
 
       const card = document.createElement('div');
       card.className = 'event-card';
 
       card.innerHTML = `
+        <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleBookmark(event, '${event.id}')">${isStarred ? '★' : '☆'}</button>
         <button class="event-header" onclick="openModal(${globalIndex})">
           <div class="event-meta">
             <div class="event-date">${event.date}</div>
@@ -846,6 +884,7 @@
   });
 
   window.openModal = function(globalIndex) {
+    currentModalGlobalIndex = globalIndex;
     const event = scheduleData[globalIndex];
     const isChairman = event.note.includes("회장님 참석");
     
@@ -859,6 +898,15 @@
     document.getElementById('modalContent').innerText = event.content;
     document.getElementById('modalHost').innerText = event.host;
     document.getElementById('modalNote').innerText = event.note;
+
+    const modalStar = document.getElementById('modalStarBtn');
+    if (bookmarks.includes(event.id)) {
+      modalStar.innerText = '★';
+      modalStar.classList.add('starred');
+    } else {
+      modalStar.innerText = '☆';
+      modalStar.classList.remove('starred');
+    }
 
     document.getElementById('eventModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -880,26 +928,6 @@
       history.back();
     }
   };
-
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      const selectedFilter = e.target.dataset.month;
-      
-      currentSelectedMonth = selectedFilter;
-
-      if (selectedFilter === 'all') {
-        calYear = currentYear;
-        calMonth = currentMonth;
-      } else {
-        calMonth = parseInt(selectedFilter);
-      }
-      
-      updateView();
-    });
-  });
 
   let deferredPrompt;
   const installBtn = document.getElementById('installBtn');
