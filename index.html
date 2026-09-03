@@ -442,6 +442,21 @@
     z-index: 10;
   }
   
+  /* 날짜 클릭 시 해당 날짜의 여러 일정을 선택하는 목록 */
+  .day-events-modal-content { max-width: 400px; }
+  .day-events-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; }
+  .day-events-subtitle { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px; }
+  .day-event-list { display: flex; flex-direction: column; gap: 7px; }
+  .day-event-item {
+    width: 100%; text-align: left; background: #f8fafc;
+    border: 1px solid var(--border-color); border-radius: 9px;
+    padding: 10px 11px; cursor: pointer;
+  }
+  .day-event-item:active { background: #edf2f7; }
+  .day-event-item-title { font-size: 0.82rem; font-weight: 700; line-height: 1.35; word-break: keep-all; }
+  .day-event-item-meta { margin-top: 4px; font-size: 0.68rem; color: var(--text-muted); }
+  .day-event-item.chairman { border-color: #d0e1fd; background: #f5f9ff; }
+
   .modal-title-area {
     display: flex;
     justify-content: space-between;
@@ -541,6 +556,15 @@
 
   <div class="schedule-container" id="scheduleContainer">
     <div class="loading-msg">최신 일정을 불러오는 중입니다...⏳</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="dayEventsModal" onclick="closeDayEventsModalOnOutsideClick(event)">
+  <div class="modal-content day-events-modal-content">
+    <button class="modal-close" onclick="closeDayEventsModal()">×</button>
+    <div class="day-events-title" id="dayEventsTitle"></div>
+    <div class="day-events-subtitle" id="dayEventsSubtitle"></div>
+    <div class="day-event-list" id="dayEventList"></div>
   </div>
 </div>
 
@@ -847,7 +871,7 @@
         if (isChairman) chipClass += " chairman";
 
         const shortTitle = e.title.length > 7 ? e.title.substring(0, 7) + '..' : e.title;
-        eventsHtml += `<div class="${chipClass}" onclick="openModal(${globalIndex}); event.stopPropagation();">${shortTitle}</div>`;
+        eventsHtml += `<div class="${chipClass}" onclick="openDayEventsModal(${calYear}, ${calMonth}, ${d}); event.stopPropagation();">${shortTitle}</div>`;
       });
 
       const isToday = (calYear === currentYear && calMonth === currentMonth && d === currentDay);
@@ -864,8 +888,12 @@
         dateNumClass += " text-blue";
       }
 
+      const dateClick = monthBaseData.length > 0
+        ? `onclick="openDayEventsModal(${calYear}, ${calMonth}, ${d})"`
+        : "";
+
       grid.innerHTML += `
-        <div class="${cellClass}">
+        <div class="${cellClass}" ${dateClick} style="${monthBaseData.length > 0 ? 'cursor:pointer;' : ''}">
           <div class="${dateNumClass}">${d}${todayBadge}</div>
           ${eventsHtml}
         </div>
@@ -929,8 +957,73 @@
   }
   
   window.addEventListener('popstate', function(event) {
+    document.getElementById('dayEventsModal').style.display = 'none';
     hideModalDOM();
   });
+
+  // 날짜를 클릭하면 그 날짜의 일정들을 먼저 보여줍니다.
+  // 일정이 1개면 바로 상세 화면, 2개 이상이면 선택 목록을 표시합니다.
+  window.openDayEventsModal = function(year, month, day) {
+    const dayEvents = scheduleData.filter(eventData =>
+      Number(eventData.month) === Number(month) &&
+      Number(eventData.day) === Number(day) &&
+      (!showBookmarksOnly || bookmarks.includes(eventData.id))
+    );
+
+    if (dayEvents.length === 0) return;
+
+    if (dayEvents.length === 1) {
+      openModal(scheduleData.indexOf(dayEvents[0]));
+      return;
+    }
+
+    document.getElementById('dayEventsTitle').innerText =
+      `${year}년 ${month}월 ${day}일 일정`;
+    document.getElementById('dayEventsSubtitle').innerText =
+      `총 ${dayEvents.length}개의 일정이 있습니다. 확인할 일정을 선택하세요.`;
+
+    const list = document.getElementById('dayEventList');
+    list.innerHTML = '';
+
+    dayEvents.forEach(eventData => {
+      const index = scheduleData.indexOf(eventData);
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'day-event-item' +
+        (eventData.note.includes("회장님 참석") ? ' chairman' : '');
+
+      const title = document.createElement('div');
+      title.className = 'day-event-item-title';
+      title.innerText = eventData.title;
+
+      const meta = document.createElement('div');
+      meta.className = 'day-event-item-meta';
+      meta.innerText = `${eventData.location} · ${eventData.dday}`;
+
+      item.appendChild(title);
+      item.appendChild(meta);
+
+      item.onclick = function() {
+        closeDayEventsModal(false);
+        openModal(index);
+      };
+
+      list.appendChild(item);
+    });
+
+    document.getElementById('dayEventsModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    history.pushState({ dayEventsModalOpen: true }, "", "");
+  };
+
+  window.closeDayEventsModal = function(goBack = true) {
+    document.getElementById('dayEventsModal').style.display = 'none';
+    if (goBack) history.back();
+  };
+
+  window.closeDayEventsModalOnOutsideClick = function(e) {
+    if (e.target.id === 'dayEventsModal') history.back();
+  };
 
   window.openModal = function(globalIndex) {
     currentModalGlobalIndex = globalIndex;
