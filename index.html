@@ -192,24 +192,21 @@
     line-height: 1;
   }
   
-  /* 달력 일정 표시: 일반 일정은 흰색 테두리만, 회장님 일정은 파란색으로 강조 */
   .cal-event-chip {
     font-size: 0.55rem;
     padding: 2px 2px;
     border-radius: 3px;
     margin-bottom: 2px;
-    color: #000000;
+    color: #000000; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: #ffffff;
-    border: 1px solid #ffffff;
+    background-color: #e2e8f0; 
     font-weight: 600;
     cursor: pointer;
   }
   .cal-event-chip.chairman {
-    background-color: #d0e1fd;
-    border: 1px solid #d0e1fd;
+    background-color: #d0e1fd; 
     color: #000000;
   }
 
@@ -490,15 +487,6 @@
   }
   .modal-star.starred {
     color: #d69e2e;
-  }
-
-  .modal-chairman-footnote {
-    margin: -4px 0 10px 0;
-    padding-left: 2px;
-    font-size: 0.68rem;
-    color: var(--primary-color);
-    font-weight: 600;
-    line-height: 1.4;
   }
 
   .modal-detail-row {
@@ -1043,11 +1031,8 @@
     const isChairman = event.note.includes("회장님 참석");
     
     const titleEl = document.getElementById('modalTitle');
-    titleEl.innerText = isChairman ? `${event.title} *` : event.title;
+    titleEl.innerText = event.title;
     titleEl.className = isChairman ? "modal-title chairman" : "modal-title";
-
-    const chairmanFootnote = document.getElementById('modalChairmanFootnote');
-    chairmanFootnote.style.display = isChairman ? 'block' : 'none';
 
     document.getElementById('modalDate').innerText = event.date;
     document.getElementById('modalLocation').innerText = event.location;
