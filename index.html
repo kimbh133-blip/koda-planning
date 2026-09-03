@@ -192,31 +192,25 @@
     line-height: 1;
   }
   
+  /* 달력 일정 표시: 일반 일정은 흰색 테두리만, 회장님 일정은 파란색으로 강조 */
   .cal-event-chip {
     font-size: 0.55rem;
     padding: 2px 2px;
     border-radius: 3px;
     margin-bottom: 2px;
-    color: #4a5568;
+    color: #000000;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: transparent;
+    background-color: #ffffff;
+    border: 1px solid #ffffff;
     font-weight: 600;
     cursor: pointer;
   }
-  .chairman-mark {
-    font-size: 0.48rem;
-    vertical-align: super;
-    margin-left: 1px;
-    font-weight: 900;
-    line-height: 0;
-  }
-
   .cal-event-chip.chairman {
     background-color: #d0e1fd;
+    border: 1px solid #d0e1fd;
     color: #000000;
-    font-weight: 800;
   }
 
   /* 상단 메뉴바 */
@@ -496,6 +490,15 @@
   }
   .modal-star.starred {
     color: #d69e2e;
+  }
+
+  .modal-chairman-footnote {
+    margin: -4px 0 10px 0;
+    padding-left: 2px;
+    font-size: 0.68rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    line-height: 1.4;
   }
 
   .modal-detail-row {
@@ -880,8 +883,7 @@
         if (isChairman) chipClass += " chairman";
 
         const shortTitle = e.title.length > 7 ? e.title.substring(0, 7) + '..' : e.title;
-        const chairmanMark = isChairman ? '<sup class="chairman-mark">★</sup>' : '';
-        eventsHtml += `<div class="${chipClass}" onclick="openDayEventsModal(${calYear}, ${calMonth}, ${d}); event.stopPropagation();">${shortTitle}${chairmanMark}</div>`;
+        eventsHtml += `<div class="${chipClass}" onclick="openDayEventsModal(${calYear}, ${calMonth}, ${d}); event.stopPropagation();">${shortTitle}</div>`;
       });
 
       const isToday = (calYear === currentYear && calMonth === currentMonth && d === currentDay);
@@ -1041,8 +1043,11 @@
     const isChairman = event.note.includes("회장님 참석");
     
     const titleEl = document.getElementById('modalTitle');
-    titleEl.innerText = event.title;
+    titleEl.innerText = isChairman ? `${event.title} *` : event.title;
     titleEl.className = isChairman ? "modal-title chairman" : "modal-title";
+
+    const chairmanFootnote = document.getElementById('modalChairmanFootnote');
+    chairmanFootnote.style.display = isChairman ? 'block' : 'none';
 
     document.getElementById('modalDate').innerText = event.date;
     document.getElementById('modalLocation').innerText = event.location;
