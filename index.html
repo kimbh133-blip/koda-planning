@@ -197,16 +197,18 @@
     padding: 2px 2px;
     border-radius: 3px;
     margin-bottom: 2px;
-    color: #000000; 
+    color: #000000;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: #e2e8f0; 
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
     font-weight: 600;
     cursor: pointer;
   }
   .cal-event-chip.chairman {
-    background-color: #d0e1fd; 
+    background-color: #d0e1fd;
+    border: 1px solid #d0e1fd;
     color: #000000;
   }
 
@@ -448,12 +450,20 @@
   .day-events-subtitle { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 12px; }
   .day-event-list { display: flex; flex-direction: column; gap: 7px; }
   .day-event-item {
-    width: 100%; text-align: left; background: #f8fafc;
-    border: 1px solid var(--border-color); border-radius: 9px;
+    width: 100%; text-align: left; background: #ffffff;
+    border: 1px solid #e5e7eb; border-radius: 9px;
     padding: 10px 11px; cursor: pointer;
   }
-  .day-event-item:active { background: #edf2f7; }
+  .day-event-item:active { background: #f8fafc; }
   .day-event-item-title { font-size: 0.82rem; font-weight: 700; line-height: 1.35; word-break: keep-all; }
+  .day-event-item-title .chairman-mark {
+    font-size: 0.58rem;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: 2px;
+    color: #c08a22;
+    font-weight: 800;
+  }
   .day-event-item-meta { margin-top: 4px; font-size: 0.68rem; color: var(--text-muted); }
   .day-event-item.chairman { border-color: #d0e1fd; background: #f5f9ff; }
 
@@ -972,11 +982,6 @@
 
     if (dayEvents.length === 0) return;
 
-    if (dayEvents.length === 1) {
-      openModal(scheduleData.indexOf(dayEvents[0]));
-      return;
-    }
-
     document.getElementById('dayEventsTitle').innerText =
       `${year}년 ${month}월 ${day}일 일정`;
     document.getElementById('dayEventsSubtitle').innerText =
@@ -994,7 +999,16 @@
 
       const title = document.createElement('div');
       title.className = 'day-event-item-title';
-      title.innerText = eventData.title;
+      title.innerHTML = '';
+      const titleText = document.createTextNode(eventData.title);
+      title.appendChild(titleText);
+
+      if (eventData.note.includes("회장님 참석")) {
+        const chairmanMark = document.createElement('sup');
+        chairmanMark.className = 'chairman-mark';
+        chairmanMark.innerText = '★';
+        title.appendChild(chairmanMark);
+      }
 
       const meta = document.createElement('div');
       meta.className = 'day-event-item-meta';
